@@ -1,0 +1,1497 @@
+Refresh started: 2026-08-23 19:55:23
+
+===============================================================================================
+                         AI JOB HUNTER
+                    MASTER JOB REFRESH
+===============================================================================================
+
+This will run:
+  job_search.py
+       ↓
+  job_verifier.py
+       ↓
+  resume_matcher.py
+       ↓
+  application_ranker.py
+       ↓
+  application_tracker.py
+       ↓
+  application_prep.py
+
+Existing active applications: 15
+Existing archived jobs: 0
+
+
+==========================================================================================
+RUNNING: job_search.py
+==========================================================================================
+
+===========================================================================
+        AI DATA ENGINEERING JOB HUNTER V7
+===========================================================================
+
+===========================================================================
+SEARCHING FOR JOBS
+===========================================================================
+
+SEARCH: Data Engineer
+  Offset 0: 100 jobs / 1012 available
+  Offset 100: 100 jobs / 1012 available
+  Offset 200: 100 jobs / 1012 available
+  Offset 300: 100 jobs / 1012 available
+  Offset 400: 100 jobs / 1012 available
+  Offset 500: 100 jobs / 1012 available
+  Offset 600: 100 jobs / 1012 available
+  Offset 700: 100 jobs / 1012 available
+  Offset 800: 100 jobs / 1012 available
+  Offset 900: 100 jobs / 1012 available
+  Offset 1000: 12 jobs / 1012 available
+
+SEARCH: Data Engineering
+  Offset 0: 100 jobs / 1012 available
+  Offset 100: 100 jobs / 1012 available
+  Offset 200: 100 jobs / 1012 available
+  Offset 300: 100 jobs / 1012 available
+  Offset 400: 100 jobs / 1012 available
+  Offset 500: 100 jobs / 1012 available
+  Offset 600: 100 jobs / 1012 available
+  Offset 700: 100 jobs / 1012 available
+  Offset 800: 100 jobs / 1012 available
+  Offset 900: 100 jobs / 1012 available
+  Offset 1000: 12 jobs / 1012 available
+
+SEARCH: Data Platform Engineer
+  Offset 0: 100 jobs / 1012 available
+  Offset 100: 100 jobs / 1012 available
+  Offset 200: 100 jobs / 1012 available
+  Offset 300: 100 jobs / 1012 available
+  Offset 400: 100 jobs / 1012 available
+  Offset 500: 100 jobs / 1012 available
+  Offset 600: 100 jobs / 1012 available
+  Offset 700: 100 jobs / 1012 available
+  Offset 800: 100 jobs / 1012 available
+  Offset 900: 100 jobs / 1012 available
+  Offset 1000: 12 jobs / 1012 available
+
+SEARCH: Databricks Data Engineer
+  Offset 0: 89 jobs / 89 available
+
+SEARCH: PySpark Data Engineer
+  Offset 0: 62 jobs / 62 available
+
+SEARCH: Spark Data Engineer
+  Offset 0: 62 jobs / 62 available
+
+SEARCH: AWS Data Engineer
+  Offset 0: 100 jobs / 100 available
+  Offset 100: 0 jobs / 100 available
+
+SEARCH: Azure Data Engineer
+  Offset 0: 89 jobs / 89 available
+
+SEARCH: Junior Data Engineer
+  Offset 0: 14 jobs / 14 available
+
+SEARCH: Associate Data Engineer
+  Offset 0: 54 jobs / 54 available
+
+SEARCH: Entry Level Data Engineer
+  Offset 0: 1 jobs / 1 available
+
+SEARCH: Graduate Data Engineer
+  Offset 0: 1 jobs / 1 available
+
+SEARCH: Fresher Data Engineer
+  Offset 0: 0 jobs / 0 available
+
+SEARCH: Trainee Data Engineer
+  Offset 0: 2 jobs / 2 available
+
+SEARCH: Junior Databricks Data Engineer
+  Offset 0: 14 jobs / 14 available
+
+SEARCH: Junior PySpark Data Engineer
+  Offset 0: 14 jobs / 14 available
+
+===========================================================================
+SEARCH SUMMARY
+===========================================================================
+Raw jobs received: 3538
+Unique jobs: 917
+
+===========================================================================
+FILTER SUMMARY
+===========================================================================
+Title filtered: 170
+Location filtered: 0
+Seniority filtered: 359
+Experience filtered: 177
+Final matches: 211
+
+APPLY: 17
+STRONG MAYBE: 14
+STRETCH: 12
+MAYBE: 48
+LOW PRIORITY: 120
+
+Saved all filtered jobs to:
+jobs.json
+
+===========================================================================
+        TOP JOBS FOR YOU
+===========================================================================
+
+#1 MATCH: 100/100 [APPLY]
+TITLE: Associate Data Engineer
+COMPANY: Amgen
+LOCATION: India - Hyderabad
+EXPERIENCE: 2.0
+URL: https://amgen.wd1.myworkdayjobs.com/Careers/job/India---Hyderabad/Associate-Data-Engineer_R-250969?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#2 MATCH: 96/100 [STRETCH]
+TITLE: Associate Engineer - Data engineer
+COMPANY: HARMAN International
+LOCATION: Bangalore - Karnataka, India - Kalyani Platina
+EXPERIENCE: 3.0
+URL: https://harman.wd3.myworkdayjobs.com/HARMAN/job/Bangalore---Karnataka-India---Kalyani-Platina/Associate-Engineer---Data-engineer_R-54436-2026?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#3 MATCH: 96/100 [APPLY]
+TITLE: Data Engineer, AI
+COMPANY: Bosch
+LOCATION: Bangalore, India
+EXPERIENCE: 2.0
+URL: https://jobs.smartrecruiters.com/boschgroup/744000140196749?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#4 MATCH: 92/100 [APPLY]
+TITLE: Associate Data Engineering
+COMPANY: gea
+LOCATION: Bengaluru
+EXPERIENCE: 2.0
+URL: https://gea.wd3.myworkdayjobs.com/GEACareers/job/Bengaluru/Associate-Data-Engineering_JR-0038042-1?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#5 MATCH: 89/100 [APPLY]
+TITLE: Data Engineer
+COMPANY: EXL
+LOCATION: Gurugram, Haryana, India
+EXPERIENCE: 2.0
+URL: https://fa-ewjt-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_2/job/17456?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#6 MATCH: 88/100 [APPLY]
+TITLE: Data Engineer — AI & Agentic Solutions
+COMPANY: Eli Lilly
+LOCATION: Bangalore, Karnātaka
+EXPERIENCE: 2.0
+URL: https://careers.lilly.com/us/en/job/LILLUSR110018EXTERNALENUS?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#7 MATCH: 88/100 [APPLY]
+TITLE: Data Engineer — AI & Agentic Solutions
+COMPANY: lilly
+LOCATION: India, Bengaluru
+EXPERIENCE: 2.0
+URL: https://lilly.wd115.myworkdayjobs.com/LLY/job/India-Bengaluru/Data-Engineer---AI---Agentic-Solutions_R-110018-1?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#8 MATCH: 88/100 [APPLY]
+TITLE: Data Engineer
+COMPANY: weekday-1
+LOCATION: Bengaluru, Karnataka, India
+EXPERIENCE: 2.0
+URL: https://apply.workable.com/j/85AAB6715E?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#9 MATCH: 86/100 [APPLY]
+TITLE: Data Engineer
+COMPANY: JLL
+LOCATION: Bengaluru, KA
+EXPERIENCE: 1.0
+URL: https://jll.wd1.myworkdayjobs.com/en-US/jllcareers/job/Data-Engineer-2_REQ508826?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#10 MATCH: 86/100 [APPLY]
+TITLE: Data Engineer
+COMPANY: TechDome
+LOCATION: Hyderabad, India
+EXPERIENCE: 1.0
+URL: https://techdome.keka.com/careers/jobdetails/150645?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#11 MATCH: 83/100 [APPLY]
+TITLE: Data Engineering Analyst
+COMPANY: Cigna Group
+LOCATION: Bengaluru, India
+EXPERIENCE: 2.0
+URL: https://cigna.wd5.myworkdayjobs.com/cignacareers/job/Bengaluru-India/Data-Engineering-Analyst_26009904?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#12 MATCH: 83/100 [APPLY]
+TITLE: Data Engineering Analyst
+COMPANY: Allegiance Benefit Plan Management
+LOCATION: Bengaluru, Karnātaka
+EXPERIENCE: 2.0
+URL: https://jobs.thecignagroup.com/us/en/job/CIGNUS26009904EXTERNALENUS?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#13 MATCH: 81/100 [APPLY]
+TITLE: Engineer, Data Engineering
+COMPANY: dowjones
+LOCATION: Bangalore
+EXPERIENCE: 2.0
+URL: https://dowjones.wd1.myworkdayjobs.com/News_Corp_Careers/job/Bangalore/Engineer--Data-Engineering_Job_Req_54785?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#14 MATCH: 81/100 [APPLY]
+TITLE: Data Engineer
+COMPANY: NatWest Group
+LOCATION: Bengaluru
+EXPERIENCE: None
+URL: https://rbs.wd3.myworkdayjobs.com/RBS/job/Bengaluru/Data-Engineer_R-00283667-1?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#15 MATCH: 81/100 [APPLY]
+TITLE: Software Engineer, Data Engineer
+COMPANY: LG Ad Solutions
+LOCATION: Bangalore, India
+EXPERIENCE: 2.0
+URL: https://jobs.ashbyhq.com/lgads/57f48091-6bf5-4dff-9e16-5f856f6c0b20?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#16 MATCH: 81/100 [APPLY]
+TITLE: Data Engineer_AI
+COMPANY: Bosch Group
+LOCATION: Bangalore, in
+EXPERIENCE: 2.0
+URL: https://jobs.smartrecruiters.com/BoschGroup/744000140196749-data-engineer-ai?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#17 MATCH: 79/100 [APPLY]
+TITLE: AWS Data Engineer
+COMPANY: Citi
+LOCATION: Pune, Maharashtra
+EXPERIENCE: 0.0
+URL: https://citi.wd5.myworkdayjobs.com/en-US/2/job/AWS-Data-Engineer_26958196?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#18 MATCH: 77/100 [APPLY]
+TITLE: AI Data Engineer
+COMPANY: Kyndryl Canada
+LOCATION: Bangalore, Karnataka, India; Hyderabad, Telangana, India; Gurgaon, Haryana, India; Chennai, Tamil Nadu, India; Pune, Maharashtra, India; Greater Noida, Uttar Pradesh, India
+EXPERIENCE: 2.0
+URL: https://kyndryl.wd5.myworkdayjobs.com/en-US/KyndrylProfessionalCareers/job/AI-Data-Engineer_R-66454?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#19 MATCH: 76/100 [MAYBE]
+TITLE: Cloud Data Engineer
+COMPANY: Barclays
+LOCATION: Pune, Gera Commerzone SEZ
+EXPERIENCE: None
+URL: https://barclays.wd3.myworkdayjobs.com/External_Career_Site_Barclays/job/Pune-Gera-Commerzone-SEZ/Cloud-Data-Engineer_JR-0000118605-1?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#20 MATCH: 76/100 [MAYBE]
+TITLE: Azure Data Engineer - Java
+COMPANY: diconium
+LOCATION: Bangalore
+EXPERIENCE: None
+URL: https://diconium.wd3.myworkdayjobs.com/Embitel_Technologies/job/Bangalore/Azure-Data-Engineer---Java_JR101435?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#21 MATCH: 76/100 [MAYBE]
+TITLE: Data Engineer 1 FTE
+COMPANY: PradeepIT Consulting Services Pvt Ltd
+LOCATION: Bengaluru, KA, India
+EXPERIENCE: None
+URL: https://www.careers-page.com/pradeepit/job/L74XV565?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#22 MATCH: 75/100 [MAYBE]
+TITLE: Data Engineer (AI/BI) | Databricks-Centric - RibbitZ
+COMPANY: Taraki
+LOCATION: Mumbai, Maharashtra, India
+EXPERIENCE: None
+URL: https://www.careers-page.com/taraki-search/job/V6YX4YV6?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#23 MATCH: 74/100 [STRONG MAYBE]
+TITLE: Technical Data Engineer (Databricks)
+COMPANY: ShyftLabs
+LOCATION: Coimbatore
+EXPERIENCE: 2.0
+URL: https://jobs.lever.co/shyftlabs/7d46b391-a417-4816-aa96-29d5c7e58330?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#24 MATCH: 73/100 [STRONG MAYBE]
+TITLE: AI & Data Engineer
+COMPANY: jobgether
+LOCATION: India
+EXPERIENCE: 2.0
+URL: https://jobs.lever.co/jobgether/2729318f-05d3-4430-aac5-ca644f550244?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+#25 MATCH: 73/100 [STRONG MAYBE]
+TITLE: Data Engineer, Cross Border Science and Analytics
+COMPANY: Amazon
+LOCATION: Bengaluru, Karnataka
+EXPERIENCE: 1.0
+URL: https://amazon.jobs//en/jobs/10407655/data-engineer-cross-border-science-and-analytics/?utm_source=freehire.me
+---------------------------------------------------------------------------
+
+==========================================================================================
+RUNNING: job_verifier.py
+==========================================================================================
+
+===============================================================================================
+                         JOB VERIFIER
+===============================================================================================
+
+Jobs loaded: 193
+Duplicates removed: 1
+Jobs to verify: 192
+
+[1/192] KPMG Ukraine - Executive-GDC (Data Engineer)
+  URL: https://ejgk.fa.em2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/30043569?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[2/192] Amgen - Associate Data Engineer
+  URL: https://amgen.wd1.myworkdayjobs.com/Careers/job/India---Hyderabad/Associate-Data-Engineer_R-250969?utm_source=freehire.me
+  Experience: 2.0
+  Required skills: 15
+  Preferred skills: 0
+  Mentioned skills: 3
+  Seniority: JUNIOR
+  Status: VERIFIED
+
+[3/192] TechDome - Data Engineer
+  URL: https://techdome.keka.com/careers/jobdetails/150645?utm_source=freehire.me
+  Experience: 4.0
+  Required skills: 0
+  Preferred skills: 1
+  Mentioned skills: 16
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[4/192] JLL - Data Engineer
+  URL: https://jll.wd1.myworkdayjobs.com/en-US/jllcareers/job/Data-Engineer-2_REQ508826?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[5/192] gea - Associate Data Engineering
+  URL: https://gea.wd3.myworkdayjobs.com/GEACareers/job/Bengaluru/Associate-Data-Engineering_JR-0038042-1?utm_source=freehire.me
+  Experience: 2.0
+  Required skills: 7
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: JUNIOR
+  Status: VERIFIED
+
+[6/192] KPMG Ukraine - Associate Consultant - Data Engineer(Python/Pyspark)
+  URL: https://ejgk.fa.em2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/30047104?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: JUNIOR
+  Status: PARTIAL
+
+[7/192] Bosch Group - Data Engineer_AI
+  URL: https://jobs.smartrecruiters.com/BoschGroup/744000140196749-data-engineer-ai?utm_source=freehire.me
+  Experience: 3.0
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 8
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[8/192] Cognizant - Python__Data Engineering
+  URL: https://cognizant.taleo.net/careersection/naukri/jobdetail.ftl?job=00068698971&lang=en&utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[9/192] Zensar - GCP Data Engineer
+  URL: https://fa-etvl-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/149655?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[10/192] Zensar Technologies - GCP Data Engineer
+  URL: https://fa-etvl-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/149655?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[11/192] Capco - Data Engineer - Python and Azure Data Bricks
+  URL: https://job-boards.greenhouse.io/capco/jobs/7982044?utm_source=freehire.me
+  Experience: 4.0
+  Required skills: 5
+  Preferred skills: 0
+  Mentioned skills: 6
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[12/192] diconium - Data Engineer
+  URL: https://diconium.wd3.myworkdayjobs.com/Embitel_Technologies/job/Bangalore/Data-Engineer_JR101210?utm_source=freehire.me
+  Experience: None
+  Required skills: 5
+  Preferred skills: 0
+  Mentioned skills: 6
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[13/192] ShyftLabs - Technical Data Engineer (Databricks)
+  URL: https://jobs.lever.co/shyftlabs/7d46b391-a417-4816-aa96-29d5c7e58330?utm_source=freehire.me
+  Experience: 5.0
+  Required skills: 5
+  Preferred skills: 0
+  Mentioned skills: 12
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[14/192] amadeus - Data Engineer 3
+  URL: https://amadeus.wd502.myworkdayjobs.com/jobs/job/Bangalore/Data-Engineer-3_R36099-1?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[15/192] Bosch - Data Engineer, AI
+  URL: https://jobs.smartrecruiters.com/boschgroup/744000140196749?utm_source=freehire.me
+  Experience: 3.0
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 8
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[16/192] Two Circles - Data Engineer (Audience Intelligence)
+  URL: https://apply.workable.com/j/D982CAB2D3?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[17/192] Amazon - Data Engineer, Cross Border Science and Analytics
+  URL: https://amazon.jobs//en/jobs/10407655/data-engineer-cross-border-science-and-analytics/?utm_source=freehire.me
+  FAILED: HTTP Error 404: Not Found
+[18/192] ShyftLabs - Data Engineer
+  URL: https://jobs.lever.co/shyftlabs/a34ac0d8-9c48-4cd6-9c12-c5a6740b18ac?utm_source=freehire.me
+  Experience: 2.0
+  Required skills: 9
+  Preferred skills: 0
+  Mentioned skills: 2
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[19/192] LG Ad Solutions - Software Engineer, Data Engineer
+  URL: https://jobs.ashbyhq.com/lgads/57f48091-6bf5-4dff-9e16-5f856f6c0b20?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 9
+  Mentioned skills: 1
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[20/192] ADCI - Karnataka - Data Engineer, Conversational Shopping Data Engineering
+  URL: https://en-in.whatjobs.com/pub_api__cpl__240434943__7111?geoID=15842&utm_campaign=publisher&utm_medium=api&utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[21/192] pditechnologies - Data Engineer II
+  URL: https://jobs.lever.co/pditechnologies/98eeda02-b020-4266-b48d-2733ab3994aa?utm_source=freehire.me
+  Experience: 2.0
+  Required skills: 8
+  Preferred skills: 3
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[22/192] Nike - Data Engineer I, ITC
+  URL: https://nike.wd1.myworkdayjobs.com/nke/job/Karnataka-India/Data-Engineer-I--ITC_R-76407?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[23/192] Msd - Data Engineering Specialist
+  URL: https://echojobs.io/job/msd-specialist-data-engineering-qoreq?utm_source=freehire.me
+  FAILED: HTTP Error 429: Too Many Requests
+[24/192] ADV TECHMINDS - AWS DATA ENGINEER & ETL EXPERT ( FREELANCE REMOTE )
+  URL: https://en-in.whatjobs.com/pub_api__cpl__239651822__7111?geoID=2062&utm_campaign=publisher&utm_medium=api&utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[25/192] Elfonze Technologies - Data Engineer
+  URL: https://elfonze.zohorecruit.in/jobs/Careers/41527000034777662?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[26/192] Citi - AWS Data Engineer
+  URL: https://citi.wd5.myworkdayjobs.com/en-US/2/job/AWS-Data-Engineer_26958196?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[27/192] Black Box - Data Engineer
+  URL: https://eoje.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/job/6505?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[28/192] Barclays - Data Engineer - ETL
+  URL: https://barclays.wd3.myworkdayjobs.com/External_Career_Site_Barclays/job/Bengaluru-Maruthi-Onyx---TESCO-TSA/Data-Engineer---ETL_JR-0000118108?utm_source=freehire.me
+  Experience: None
+  Required skills: 6
+  Preferred skills: 0
+  Mentioned skills: 7
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[29/192] omnissa - Databricks Data Engineer - Bengaluru
+  URL: https://omnissa.wd501.myworkdayjobs.com/Omnissa_External_Career_Site/job/Bengaluru-India/Databricks-Data-Engineer---Bengaluru_R-102067-2?utm_source=freehire.me
+  Experience: 2.0
+  Required skills: 4
+  Preferred skills: 0
+  Mentioned skills: 8
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[30/192] Freshworks - Specialist - Data Platform Engineering
+  URL: https://jobs.smartrecruiters.com/Freshworks/744000143102264-specialist-data-platform-engineering?utm_source=freehire.me
+  Experience: 3.0
+  Required skills: 12
+  Preferred skills: 0
+  Mentioned skills: 6
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[31/192] zageno - Software Engineer II (Data Engineering)
+  URL: https://zageno.bamboohr.com/careers/103?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[32/192] Barclays - AWS Data Engineer
+  URL: https://barclays.wd3.myworkdayjobs.com/External_Career_Site_Barclays/job/Pune-Gera-Commerzone-SEZ/Data-Engineer_JR-0000089960?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[33/192] Zensar - GCP Data Engineer
+  URL: https://fa-etvl-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/148090?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[34/192] Zensar Technologies - GCP Data Engineer
+  URL: https://fa-etvl-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/148090?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[35/192] Greenlight - Data Engineer
+  URL: https://jobs.lever.co/greenlight/7ba8409b-8061-4cb0-aed6-3c6b44c994c7?utm_source=freehire.me
+  Experience: None
+  Required skills: 7
+  Preferred skills: 3
+  Mentioned skills: 2
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[36/192] EXL - AWS Data Engineer
+  URL: https://fa-ewjt-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_2/job/17353?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[37/192] Thermo Fisher Scientific - Data Engineer III
+  URL: https://thermofisher.wd5.myworkdayjobs.com/ThermoFisherCareers/job/Bangalore-India/Data-Engineer-III_R-01358890-1?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[38/192] Fiserv - Data Engineer
+  URL: https://fiserv.wd5.myworkdayjobs.com/EXT/job/Thane-India/Data-Engineer_R-10399050?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[39/192] Barclays - Data Engineer - Analyst
+  URL: https://barclays.wd3.myworkdayjobs.com/External_Career_Site_Barclays/job/Mumbai-Nirlon-Knowledge-Park-BX-9th--11-12-floor/Data-Engineer---Analyst_JR-0000110756?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[40/192] genpact - Data Engineer - Data Engineering 4A
+  URL: https://genpact.wd108.myworkdayjobs.com/External_Careers/job/1401-G-India-INFOSPACE-IT-PARK-TOWER--4-JHARSA-Gurgaon/Data-Engineer---Data-Engineering-4A_JR10018671?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[41/192] Marriott Tech Accelerator - Security Data Engineer
+  URL: https://en-in.whatjobs.com/pub_api__cpl__169349510__7111?geoID=2062&utm_campaign=publisher&utm_medium=api&utm_source=freehire.me
+  Experience: 2.0
+  Required skills: 21
+  Preferred skills: 3
+  Mentioned skills: 7
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[42/192] Dell - Analyst, Data Engineering
+  URL: https://enterpriseplatform.dell.com/hcmUI/CandidateExperience/en/sites/CX_1001/job/296414?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[43/192] SOTI - Data Engineer
+  URL: https://soti.wd3.myworkdayjobs.com/Careers/job/Kochi-India/Data-Engineer_R10364-2?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[44/192] Chevron - Data Engineer
+  URL: https://chevron.wd5.myworkdayjobs.com/jobs/job/Bangalore-Karnataka-India/Data-Engineer_R000071564?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[45/192] Pull Skil - Data Engineer
+  URL: https://himalayas.app/companies/pull-skil/jobs/data-engineer?utm_source=freehire.me
+  FAILED: HTTP Error 403: Forbidden
+[46/192] weekday-1 - GCP Data Engineer
+  URL: https://apply.workable.com/j/7FEB1A57C9?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[47/192] apexx - Data Engineer
+  URL: https://jobs.ashbyhq.com/apexx/648a95af-983f-486a-b773-775484ca7beb?utm_source=freehire.me
+  Experience: 3.0
+  Required skills: 8
+  Preferred skills: 0
+  Mentioned skills: 2
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[48/192] FOX - Data Engineer
+  URL: https://fox.wd1.myworkdayjobs.com/Domestic/job/IND-KA-Bengaluru/Data-Engineer_R50033485?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[49/192] WPP - Data Engineer
+  URL: https://job-boards.greenhouse.io/wpp/jobs/8516442002?utm_source=freehire.me
+  Experience: 3.0
+  Required skills: 7
+  Preferred skills: 2
+  Mentioned skills: 1
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[50/192] FM India - Data Engineer
+  URL: https://en-in.whatjobs.com/pub_api__cpl__240439439__7111?geoID=15842&utm_campaign=publisher&utm_medium=api&utm_source=freehire.me
+  Experience: 2.0
+  Required skills: 17
+  Preferred skills: 9
+  Mentioned skills: 6
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[51/192] Mattel Inc - GCP Data Engineer
+  URL: https://jobs.smartrecruiters.com/MattelInc/744000143476999-gcp-data-engineer?utm_source=freehire.me
+  Experience: 3.0
+  Required skills: 3
+  Preferred skills: 3
+  Mentioned skills: 6
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[52/192] Kyndryl - AI Data Engineer
+  URL: https://kyndryl.wd5.myworkdayjobs.com/KyndrylProfessionalCareers/job/Bangalore-Karnataka-India/AI-Data-Engineer_R-66454?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[53/192] JP Morgan Chase - Software Engineer III - Bigdata, Spark, AWS - (Data Engineering)
+  URL: https://jpmc.fa.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/job/210734119?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[54/192] JPMorganChase - Software Engineer III - Bigdata, Spark, AWS - (Data Engineering)
+  URL: https://jpmc.fa.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/210734119?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[55/192] Vanguard - Data Engineer, Specialist
+  URL: https://vanguard.wd5.myworkdayjobs.com/vanguard_external/job/Hyderabad-India/Data-Engineer--Specialist_179121?utm_source=freehire.me
+  Experience: 1.0
+  Required skills: 5
+  Preferred skills: 4
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[56/192] Merck - Specialist , Data Engineering
+  URL: https://msd.wd5.myworkdayjobs.com/SearchJobs/job/IND---Telangana---Hyderabad-Hitec-City-Raidurg/Specialist---Data-Engineering_R412042-1?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[57/192] Carrier Global - Associate , AI & Data Engineering
+  URL: https://carrier.wd5.myworkdayjobs.com/jobs/job/Ecospace-Campus-3A-4th-Floor-Outer-Ring-Road-Bellandur-Bengaluru--560103/Associate---AI---Data-Engineering_30213204?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: JUNIOR
+  Status: PARTIAL
+
+[58/192] aliaxis - Data Engineer
+  URL: https://aliaxis.wd3.myworkdayjobs.com/Aliaxis/job/IN-KA---Bangalore/Data-Engineer_R-56448-1?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[59/192] Knowledge Services - Junior Data Engineer
+  URL: https://careers-knowledgeservices.icims.com/jobs/31209/junior-data-engineer/job?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: JUNIOR
+  Status: PARTIAL
+
+[60/192] Kyndryl Canada - AI Data Engineer
+  URL: https://kyndryl.wd5.myworkdayjobs.com/en-US/KyndrylProfessionalCareers/job/AI-Data-Engineer_R-66454?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[61/192] Cisco - Data Engineer
+  URL: https://careers.cisco.com/global/en/job/CISCISGLOBAL2019329EXTERNALENGLOBAL?utm_source=freehire.me
+  Experience: 2.0
+  Required skills: 8
+  Preferred skills: 0
+  Mentioned skills: 1
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[62/192] G2 - Data Engineer
+  URL: https://jobs.ashbyhq.com/G2/c40ad14e-1f6e-4d90-9cb5-598335c54244?utm_source=freehire.me
+  Experience: 4.0
+  Required skills: 9
+  Preferred skills: 0
+  Mentioned skills: 8
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[63/192] Zensar - DE&A - Core - Cloud Data Engineering - Snowflake Data Engineering
+  URL: https://fa-etvl-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/148948?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[64/192] Zensar Technologies - DE&A - Core - Cloud Data Engineering - Snowflake Data Engineering
+  URL: https://fa-etvl-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/148948?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[65/192] NielsenIQ - Software Engineer [Data Engineer - Python, SQL, Snowflake, Cloud, Devops (CI/CD pipeline) AI (Co-pilot usage and prompt engineering/ Gen AI), Docker, Kubernetes]
+  URL: https://jobs.smartrecruiters.com/NielsenIQ/744000143459269-software-engineer-data-engineer-python-sql-snowflake-cloud-devops-ci-cd-pipeline-ai-co-pilot-usage-and-prompt-engineering-gen-ai-docker-kubernetes-?utm_source=freehire.me
+  Experience: 3.0
+  Required skills: 4
+  Preferred skills: 2
+  Mentioned skills: 9
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[66/192] jobgether - Data Engineer
+  URL: https://jobs.lever.co/jobgether/0c44284b-a6b6-45bd-a846-5c3500eca12d?utm_source=freehire.me
+  FAILED: HTTP Error 404: Not Found
+[67/192] Forbes Advisor - Data Engineer L3
+  URL: https://ats.rippling.com/forbes-advisor/jobs/477b1631-756b-4da5-8f6d-a9728fe77f7b?utm_source=freehire.me
+  Experience: None
+  Required skills: 2
+  Preferred skills: 1
+  Mentioned skills: 4
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[68/192] Google - Cloud Data Engineer
+  URL: https://www.google.com/about/careers/applications/jobs/results/84091917435839174?utm_source=freehire.me
+  Experience: None
+  Required skills: 12
+  Preferred skills: 0
+  Mentioned skills: 1
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[69/192] HackerRank - Data Engineer II
+  URL: https://job-boards.greenhouse.io/hackerrank/jobs/8102780?utm_source=freehire.me
+  Experience: None
+  Required skills: 4
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[70/192] Synechron - Snowflake Data Engineer
+  URL: https://synechron.wd1.myworkdayjobs.com/SynechronCareers/job/Pune---Client-Location/Snowflake-Data-Engineer_JR1042877?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[71/192] Amazon - Data Engineer, Conversational Shopping Data Engineering
+  URL: https://www.amazon.jobs/en/jobs/10500469/data-engineer-conversational-shopping-data-engineering?utm_source=freehire.me
+  Experience: None
+  Required skills: 2
+  Preferred skills: 0
+  Mentioned skills: 8
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[72/192] Roche - Data Engineer E2E Trial Management - Pharma R&D
+  URL: https://roche.wd3.myworkdayjobs.com/roche-ext/job/Pune/Data-Engineer-E2E-Trial-Management---Pharma-R-D_202606-114258?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[73/192] Amazon - Data Engineer, AFT BI Content
+  URL: https://www.amazon.jobs/en/jobs/10497312/data-engineer-aft-bi-content?utm_source=freehire.me
+  Experience: None
+  Required skills: 11
+  Preferred skills: 0
+  Mentioned skills: 3
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[74/192] genpact - Analyst - Data Engineering 5A
+  URL: https://genpact.wd108.myworkdayjobs.com/External_Careers/job/1401-G-India-Floor-1-to-12-Hafeezpet-Phoenix-Hyderabad/Analyst---Data-Engineering-5A_JR10017504?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[75/192] nxwave - Data Engineer (Quantexa)
+  URL: https://nxwave.freshteam.com/jobs/ao5gJcRAbajg/data-engineer-quantexa?utm_source=freehire.me
+  Experience: 2.0
+  Required skills: 6
+  Preferred skills: 1
+  Mentioned skills: 4
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[76/192] dexcarehealth - Data Engineer
+  URL: https://jobs.lever.co/dexcarehealth/1f0432c2-5156-4006-a5e7-286e456ce284?utm_source=freehire.me
+  Experience: 2.0
+  Required skills: 0
+  Preferred skills: 6
+  Mentioned skills: 4
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[77/192] Barclays - Data Engineer-VP
+  URL: https://barclays.wd3.myworkdayjobs.com/External_Career_Site_Barclays/job/Pune-Gera-Commerzone-SEZ/Data-Engineer-VP_JR-0000117430?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[78/192] Tookitaki - Data Engineer- Service
+  URL: https://tookitaki78808.hire.trakstar.com/jobs/fk0pogf?utm_source=freehire.me
+  Experience: 3.0
+  Required skills: 4
+  Preferred skills: 7
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[79/192] Jpmorgan Chase Co - Software Engineer III - Data Engineer - Java, Spark, Databricks
+  URL: https://aijobs.net/job/software-engineer-iii-data-engineer-java-spark-databricks-bengaluru-karnataka-india-280210/?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 1
+  Mentioned skills: 15
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[80/192] SonicWall - Lab and Center Data Engineer (AWS+ On Prem)
+  URL: https://job-boards.greenhouse.io/sonicwall/jobs/8053941?utm_source=freehire.me
+  Experience: 1.0
+  Required skills: 2
+  Preferred skills: 4
+  Mentioned skills: 1
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[81/192] Visa - Data Engineer
+  URL: https://visa.wd5.myworkdayjobs.com/Visa/job/IN---Bengaluru-India/Data-Engineer_REF085104W?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[82/192] Honeywell - Data Engineer I
+  URL: https://ibqbjb.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/Honeywell/job/155149?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[83/192] svb - Data Engineer II - Snowflake, DBT, AWS
+  URL: https://svb.wd5.myworkdayjobs.com/firstcitizensindia/job/Bangalore-India/Data-Engineer-II--Snowflake-_23327-1?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 3
+  Mentioned skills: 8
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[84/192] Rockstar Games - Data Engineer
+  URL: https://job-boards.greenhouse.io/rockstargames/jobs/7680265003?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[85/192] Arcadis - Azure Data Engineer
+  URL: https://ebcs.fa.em2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/40396?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[86/192] Fiserv - Data Engineer - Business Transformation (SQL, Python, ETL/ELT, data modelling, and BI) || Noida
+  URL: https://fiserv.wd5.myworkdayjobs.com/EXT/job/Noida-India/Data-Engineer---Business-Transformation--SQL--Python--ETL-ELT--data-modelling--and-BI-----Noida_R-10398527?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[87/192] Maersk - Data Engineer
+  URL: https://maersk.wd3.myworkdayjobs.com/Maersk_Careers/job/India-Bengaluru-560064/Data-Engineer_R189375?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[88/192] IBS Software - Data Engineer
+  URL: https://fa-etbm-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/2789?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[89/192] Mattel Inc - Data Engineer Platform and Tools – Google Cloud Platform (GCP)
+  URL: https://jobs.smartrecruiters.com/MattelInc/744000142227869-data-engineer-platform-and-tools-google-cloud-platform-gcp-?utm_source=freehire.me
+  Experience: None
+  Required skills: 10
+  Preferred skills: 0
+  Mentioned skills: 3
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[90/192] JPMorganChase - Data Engineer
+  URL: https://jpmc.fa.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/210759999?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[91/192] JP Morgan Chase - Data Engineer
+  URL: https://jpmc.fa.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/job/210759999?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[92/192] Ericsson - Semantic Data Engineer
+  URL: https://jobs.ericsson.com/careers/job/563121775699381?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[93/192] pwc - Data Engineer- Associate- Analytics- Operate
+  URL: https://pwc.wd3.myworkdayjobs.com/CRM_Experienced_Careers_Site/job/Bangalore/Data-Engineer--Associate--Analytics--Operate_740327WD?utm_source=freehire.me
+  Experience: 2.0
+  Required skills: 2
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: JUNIOR
+  Status: VERIFIED
+
+[94/192] Barclays - Cloud Data Engineer
+  URL: https://barclays.wd3.myworkdayjobs.com/External_Career_Site_Barclays/job/Pune-Gera-Commerzone-SEZ/Cloud-Data-Engineer_JR-0000117783-1?utm_source=freehire.me
+  Experience: None
+  Required skills: 1
+  Preferred skills: 0
+  Mentioned skills: 7
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[95/192] Zensar - Data Engineer
+  URL: https://fa-etvl-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/148739?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[96/192] Zensar Technologies - Data Engineer
+  URL: https://fa-etvl-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/148739?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[97/192] Siemens 1 - Data Engineer
+  URL: https://aijobs.net/job/data-engineer-gurugram-haryana-india-280723/?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 1
+  Mentioned skills: 15
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[98/192] Ilink Digital - Data Engineer (ETL ODI) - AMS
+  URL: https://aijobs.net/job/data-engineer-etl-odi-ams-bangalore-north-india-280842/?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 1
+  Mentioned skills: 18
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[99/192] TransUnion - Cloud/Big Data Engineer
+  URL: https://transunion.wd5.myworkdayjobs.com/TransUnion/job/Chennai/Cloud-Big-Data-Engineer_19041089?utm_source=freehire.me
+  Experience: None
+  Required skills: 9
+  Preferred skills: 0
+  Mentioned skills: 1
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[100/192] Virtusa - Data Engineer with GCP
+  URL: https://aijobs.net/job/data-engineer-with-gcp-in-ap-hyderabad-268159/?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 16
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[101/192] RedChip Companies - Software Engineer (AI / Data Platform) – Contract/Remote
+  URL: https://himalayas.app/companies/redchip-companies/jobs/software-engineer-ai-data-platform-contract-remote-253558662?utm_source=freehire.me
+  FAILED: HTTP Error 403: Forbidden
+[102/192] emagine - Data Engineer – Digital Transformation
+  URL: https://portal.emagine.org/jobs/178871/data-engineer-digital-transformation?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[103/192] Barclays - Data Engineer ETL
+  URL: https://barclays.wd3.myworkdayjobs.com/External_Career_Site_Barclays/job/Chennai-DLF-IT-Park/Data-Engineer-ETL_JR-0000086233?utm_source=freehire.me
+  Experience: None
+  Required skills: 3
+  Preferred skills: 0
+  Mentioned skills: 3
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[104/192] pwc - Data Engineer- Associate- Analytics as Service - Operate
+  URL: https://pwc.wd3.myworkdayjobs.com/CRM_Experienced_Careers_Site/job/Bangalore/Data-Engineer--Associate--Analytics-as-Service---Operate_752205WD?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: JUNIOR
+  Status: PARTIAL
+
+[105/192] JPMorganChase - Software Engineer III - Data Engineer - Java, Spark, Databricks
+  URL: https://jpmc.fa.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/210778613?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[106/192] JP Morgan Chase - Software Engineer III - Data Engineer - Java, Spark, Databricks
+  URL: https://jpmc.fa.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/job/210778613?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[107/192] Barclays - Data Engineer
+  URL: https://barclays.wd3.myworkdayjobs.com/External_Career_Site_Barclays/job/Chennai-DLF-IT-Park/Data-Engineer_JR-0000115259?utm_source=freehire.me
+  Experience: None
+  Required skills: 1
+  Preferred skills: 0
+  Mentioned skills: 6
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[108/192] DoorDash India - Software Engineer, Data Engineer II
+  URL: https://job-boards.greenhouse.io/doordashindia/jobs/6281695?utm_source=freehire.me
+  Experience: 3.0
+  Required skills: 5
+  Preferred skills: 0
+  Mentioned skills: 2
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[109/192] Salesforce - Data Engineering MTS
+  URL: https://salesforce.wd12.myworkdayjobs.com/External_Career_Site/job/India---Bangalore/Data-Engineering-MTS_JR350293?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[110/192] American Express - Data Engineer II
+  URL: https://egug.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/26009355?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[111/192] American Express - Data Engineer II
+  URL: https://egug.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/26011997?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[112/192] Barclays - Data Engineer - PySpark Developer
+  URL: https://barclays.wd3.myworkdayjobs.com/External_Career_Site_Barclays/job/Bengaluru-Maruthi-Onyx---TESCO-TSA/Data-Engineer---PySpark-Developer_JR-0000117446-2?utm_source=freehire.me
+  Experience: None
+  Required skills: 1
+  Preferred skills: 0
+  Mentioned skills: 1
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[113/192] Amazon - Data Engineer II, CMT
+  URL: https://www.amazon.jobs/en/jobs/10499545/data-engineer-ii-cmt?utm_source=freehire.me
+  Experience: None
+  Required skills: 3
+  Preferred skills: 0
+  Mentioned skills: 3
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[114/192] Amazon - Data Engineer II, ISS Central Science and Analytics
+  URL: https://www.amazon.jobs/en/jobs/10495544/data-engineer-ii-iss-central-science-and-analytics?utm_source=freehire.me
+  Experience: None
+  Required skills: 8
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[115/192] Citi - Process and Data Engineer/Analyst
+  URL: https://citi.wd5.myworkdayjobs.com/en-US/2/job/Process-and-Data-Engineer-Analyst_26967946-1?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[116/192] Virtusa - Data Engineer
+  URL: https://aijobs.net/job/data-engineer-in-mh-pune-269907/?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 1
+  Mentioned skills: 18
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[117/192] CSC - Expert Data Engineer
+  URL: https://hczw.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/16678?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[118/192] Zensar - DE&A - Core - Cloud Data Engineering - Databricks
+  URL: https://fa-etvl-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/149519?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[119/192] Zensar Technologies - DE&A - Core - Cloud Data Engineering - Databricks
+  URL: https://fa-etvl-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/149519?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[120/192] Amazon - Data Engineer, MIDAS, Digital Acceleration
+  URL: https://www.amazon.jobs/en/jobs/10497707/data-engineer-midas-digital-acceleration?utm_source=freehire.me
+  Experience: None
+  Required skills: 3
+  Preferred skills: 0
+  Mentioned skills: 3
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[121/192] Barclays - Data Engineer - AWS Cloud Engineer
+  URL: https://barclays.wd3.myworkdayjobs.com/External_Career_Site_Barclays/job/Bengaluru-Maruthi-Onyx---TESCO-TSA/Data-Engineer---AWS-Cloud-Engineer_JR-0000117547?utm_source=freehire.me
+  Experience: None
+  Required skills: 1
+  Preferred skills: 5
+  Mentioned skills: 4
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[122/192] Bt Group - Data Engineering Specialist
+  URL: https://aijobs.net/job/data-engineering-specialist-kolkata-in-700156-277744/?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 23
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[123/192] ecsme - Data Engineer
+  URL: https://ecsme.freshteam.com/jobs/AzZAmfxLmjwE/data-engineer?utm_source=freehire.me
+  Experience: None
+  Required skills: 2
+  Preferred skills: 0
+  Mentioned skills: 4
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[124/192] Comply India - AI Data Engineer
+  URL: https://en-in.whatjobs.com/pub_api__cpl__240191022__7111?geoID=41207&utm_campaign=publisher&utm_medium=api&utm_source=freehire.me
+  Experience: 3.0
+  Required skills: 14
+  Preferred skills: 4
+  Mentioned skills: 4
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[125/192] Accenture - Data Engineer
+  URL: https://accenture.wd103.myworkdayjobs.com/AccentureCareers/job/Kolkata/Cloud-Platform-Engineer_ATCI-5074084-S1883132-1?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[126/192] emagine - Data Engineer
+  URL: https://portal.emagine.org/jobs/177698/data-engineer?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[127/192] Lifesight - Data Engineer
+  URL: https://lifesight.keka.com/careers/jobdetails/81395?utm_source=freehire.me
+  Experience: 3.0
+  Required skills: 1
+  Preferred skills: 12
+  Mentioned skills: 6
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[128/192] 66degrees - GCP Data Engineer
+  URL: https://job-boards.greenhouse.io/66degrees/jobs/5805595004?utm_source=freehire.me
+  Experience: 3.0
+  Required skills: 7
+  Preferred skills: 3
+  Mentioned skills: 1
+  Seniority: UNKNOWN
+  Status: VERIFIED
+
+[129/192] Zensar - Data Engineer
+  URL: https://fa-etvl-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/147830?utm_source=freehire.me
+  Experience: None
+  Required skills: 0
+  Preferred skills: 0
+  Mentioned skills: 0
+  Seniority: UNKNOWN
+  Status: PARTIAL
+
+[130/192] Zensar Technologies - Data Engineer
+  URL: https://fa-etvl-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/147830?utm_source=freehire.me
+Traceback (most recent call last):
+  File "/workspaces/ai-job-hunter/refresh_jobs.py", line 1005, in <module>
+    main()
+  File "/workspaces/ai-job-hunter/refresh_jobs.py", line 811, in main
+    run_step(
+  File "/workspaces/ai-job-hunter/refresh_jobs.py", line 381, in run_step
+    for raw_line in process.stdout:
+  File "<frozen codecs>", line 319, in decode
+KeyboardInterrupt

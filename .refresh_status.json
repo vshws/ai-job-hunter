@@ -1,0 +1,12 @@
+{
+  "status": "RUNNING",
+  "progress": 30.6,
+  "step": "job_verifier.py",
+  "detail": "URL: https://fa-etvl-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/147830?utm_source=freehire.me",
+  "message": "Running job_verifier.py",
+  "started_at": "2026-08-23 19:55:24",
+  "finished_at": "",
+  "elapsed_seconds": 255.4,
+  "eta_seconds": 580.1,
+  "error": ""
+}

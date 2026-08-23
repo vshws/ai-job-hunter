@@ -1,0 +1,29 @@
+__pycache__/
+*.pyc
+
+# Generated job data
+jobs.json
+verified_jobs.json
+resume_matches.json
+job_analysis.json
+application_queue.json
+application_prep.json
+
+# Generated reports
+*.txt
+
+# Personal resume
+resume.pdf
+
+# Python environment
+.venv/
+venv/
+env/
+
+# Secrets / environment variables
+.env
+
+# OS/editor files
+.DS_Store
+.vscode/
+.idea/
