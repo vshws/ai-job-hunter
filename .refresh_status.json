@@ -1,12 +1,14 @@
 {
-  "status": "RUNNING",
-  "progress": 30.6,
-  "step": "job_verifier.py",
-  "detail": "URL: https://fa-etvl-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/147830?utm_source=freehire.me",
-  "message": "Running job_verifier.py",
-  "started_at": "2026-08-23 19:55:24",
-  "finished_at": "",
-  "elapsed_seconds": 255.4,
-  "eta_seconds": 580.1,
-  "error": ""
+  "status": "SUCCESS",
+  "progress": 100.0,
+  "step": "Complete",
+  "detail": "All jobs refreshed and application history preserved.",
+  "message": "Job refresh completed successfully.",
+  "started_at": "2026-08-29 20:33:36",
+  "finished_at": "2026-08-29 20:38:59",
+  "elapsed_seconds": 322.9,
+  "eta_seconds": null,
+  "error": "",
+  "process_pid": 12652,
+  "heartbeat_at": "2026-08-29T20:38:59"
 }

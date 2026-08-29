@@ -28,10 +28,12 @@ IMPORTANT:
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import sys
 import time
+import threading
 from datetime import datetime
 from pathlib import Path
 
@@ -342,6 +344,8 @@ def update_refresh_status(
         "elapsed_seconds": round(elapsed, 1),
         "eta_seconds": round(eta, 1) if eta is not None else None,
         "error": error,
+        "process_pid": os.getpid(),
+        "heartbeat_at": datetime.now().isoformat(timespec="seconds"),
     })
 
 
@@ -356,6 +360,7 @@ def run_step(
     print("=" * 90)
 
     range_start, range_end = STEP_RANGES[script_name]
+
     update_refresh_status(
         "RUNNING",
         started_at,
@@ -367,7 +372,11 @@ def run_step(
     )
 
     process = subprocess.Popen(
-        [sys.executable, "-u", str(BASE_DIR / script_name)],
+        [
+            sys.executable,
+            "-u",
+            str(BASE_DIR / script_name),
+        ],
         cwd=BASE_DIR,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
@@ -376,43 +385,31 @@ def run_step(
     )
 
     last_progress = float(range_start)
+    last_detail = "Starting..."
+    stop_heartbeat = threading.Event()
 
-    if process.stdout is not None:
-        for raw_line in process.stdout:
-            line = raw_line.rstrip("\n")
-            print(line, flush=True)
+    def heartbeat():
+        nonlocal last_progress, last_detail
 
-            progress = last_progress
-            detail = line.strip()
+        while not stop_heartbeat.wait(2.0):
+            if process.poll() is not None:
+                break
 
-            # job_search.py prints lines such as:
-            # Offset 500: 100 jobs / 1013 available
-            if script_name == "job_search.py":
-                match = re.search(
-                    r"Offset\s+(\d+).*?([\d,]+)\s+available",
-                    line,
-                    flags=re.IGNORECASE,
-                )
-                if match:
-                    offset = int(match.group(1))
-                    available = int(match.group(2).replace(",", ""))
-                    if available > 0:
-                        fraction = min(1.0, (offset + 100) / available)
-                        progress = range_start + fraction * (range_end - range_start)
-                        detail = f"Searching jobs: {min(offset + 100, available):,} / {available:,}"
+            elapsed = time.monotonic() - started_monotonic
 
-            # If a step does not expose sub-progress, gently advance it
-            # while it is running so the dashboard never appears frozen.
-            if progress <= range_start:
-                elapsed_step = time.monotonic() - started_monotonic
-                gentle = min(
-                    range_end - 1.0,
-                    range_start + max(0.5, min(8.0, elapsed_step / 12.0)),
-                )
-                progress = max(progress, gentle)
+            # Keep the dashboard visibly alive while a child process is
+            # doing work without printing output. Never cross the step's
+            # real upper boundary here.
+            gentle = min(
+                float(range_end - 0.2),
+                range_start + min(
+                    max(0.5, elapsed / 30.0),
+                    max(0.5, (range_end - range_start) * 0.35),
+                ),
+            )
 
-            progress = min(float(range_end - 0.1), progress)
-            last_progress = max(last_progress, progress)
+            if gentle > last_progress:
+                last_progress = gentle
 
             update_refresh_status(
                 "RUNNING",
@@ -420,11 +417,81 @@ def run_step(
                 started_monotonic,
                 last_progress,
                 script_name,
-                detail,
+                last_detail,
                 f"Running {script_name}",
             )
 
-    return_code = process.wait()
+    heartbeat_thread = threading.Thread(
+        target=heartbeat,
+        daemon=True,
+    )
+    heartbeat_thread.start()
+
+    try:
+        if process.stdout is not None:
+            for raw_line in process.stdout:
+                line = raw_line.rstrip("\n")
+                print(line, flush=True)
+
+                detail = line.strip() or last_detail
+                progress = last_progress
+
+                # job_search.py prints lines such as:
+                # Offset 500: 100 jobs / 1013 available
+                if script_name == "job_search.py":
+                    match = re.search(
+                        r"Offset\s+(\d+).*?([\d,]+)\s+available",
+                        line,
+                        flags=re.IGNORECASE,
+                    )
+
+                    if match:
+                        offset = int(match.group(1))
+                        available = int(
+                            match.group(2).replace(",", "")
+                        )
+
+                        if available > 0:
+                            fraction = min(
+                                1.0,
+                                (offset + 100) / available,
+                            )
+                            progress = (
+                                range_start
+                                + fraction
+                                * (range_end - range_start)
+                            )
+                            detail = (
+                                "Searching jobs: "
+                                f"{min(offset + 100, available):,}"
+                                f" / {available:,}"
+                            )
+
+                progress = min(
+                    float(range_end - 0.1),
+                    max(progress, range_start),
+                )
+                last_progress = max(
+                    last_progress,
+                    progress,
+                )
+                last_detail = detail
+
+                update_refresh_status(
+                    "RUNNING",
+                    started_at,
+                    started_monotonic,
+                    last_progress,
+                    script_name,
+                    last_detail,
+                    f"Running {script_name}",
+                )
+
+        return_code = process.wait()
+
+    finally:
+        stop_heartbeat.set()
+        heartbeat_thread.join(timeout=1.0)
 
     if return_code != 0:
         update_refresh_status(
@@ -435,11 +502,17 @@ def run_step(
             script_name,
             f"Exit code {return_code}",
             f"{script_name} failed",
-            finished_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            error=f"{script_name} failed with exit code {return_code}",
+            finished_at=datetime.now().strftime(
+                "%Y-%m-%d %H:%M:%S"
+            ),
+            error=(
+                f"{script_name} failed "
+                f"with exit code {return_code}"
+            ),
         )
         raise RuntimeError(
-            f"{script_name} failed with exit code {return_code}"
+            f"{script_name} failed "
+            f"with exit code {return_code}"
         )
 
     update_refresh_status(
@@ -460,227 +533,110 @@ def run_step(
 def preserve_history(
     old_active: list,
     old_archive: list,
-    new_active: list
+    new_active: list,
 ):
     """
-    Preserve the user's application workflow.
+    Refresh policy:
 
-    Example:
-
-        NOT APPLIED
-        APPLIED
-        INTERVIEW
-        ACCEPTED
-        REJECTED
-
-    These statuses must NEVER be reset simply because
-    the job scraper was run again.
+    * Every job that was ACTIVE before a refresh is moved to archive.
+    * Existing archive is preserved.
+    * Only genuinely unseen jobs become ACTIVE.
+    * Application status/history is preserved in the archive.
+    * Old jobs are never deleted.
     """
 
-    now = datetime.now().isoformat(
-        timespec="seconds"
-    )
+    now = datetime.now().isoformat(timespec="seconds")
 
-    # --------------------------------------------------------
-    # Build history index
-    # --------------------------------------------------------
+    history_fields = [
+        "application_id",
+        "status",
+        "application_status",
+        "workflow_status",
+        "status_updated_at",
+        "notes",
+        "applied_at",
+        "interview_at",
+        "accepted_at",
+        "rejected_at",
+    ]
 
     history = {}
-
-    for item in (
-        old_archive
-        + old_active
-    ):
-
-        key = job_key(
-            item
-        )
-
+    for item in old_archive + old_active:
+        key = job_key(item)
         if key:
             history[key] = item
 
-    # --------------------------------------------------------
-    # Process current jobs
-    # --------------------------------------------------------
+    archived_by_key = {}
+    for item in old_archive:
+        key = job_key(item)
+        if key:
+            archived_by_key[key] = dict(item)
 
-    current_keys = set()
-
-    merged_active = []
-
-    restored_count = 0
-    new_count = 0
-
-    for item in new_active:
-
-        if not isinstance(
-            item,
-            dict
-        ):
+    # Archive everything that was previously active.
+    newly_archived = 0
+    for item in old_active:
+        if not isinstance(item, dict):
             continue
 
-        key = job_key(
-            item
-        )
-
-        current_keys.add(
-            key
-        )
-
-        record = dict(
-            item
-        )
-
-        previous = history.get(
-            key
-        )
-
-        if previous:
-
-            # ------------------------------------------------
-            # PRESERVE APPLICATION HISTORY
-            # ------------------------------------------------
-
-            history_fields = [
-                "application_id",
-                "status",
-                "application_status",
-                "workflow_status",
-                "status_updated_at",
-                "notes",
-                "applied_at",
-                "interview_at",
-                "accepted_at",
-                "rejected_at",
-            ]
-
-            for field in history_fields:
-
-                if field in previous:
-
-                    record[field] = (
-                        previous[field]
-                    )
-
-            record[
-                "job_state"
-            ] = "ACTIVE"
-
-            record[
-                "last_seen_at"
-            ] = now
-
-            if (
-                "first_seen_at"
-                in previous
-            ):
-
-                record[
-                    "first_seen_at"
-                ] = previous[
-                    "first_seen_at"
-                ]
-
-            else:
-
-                record[
-                    "first_seen_at"
-                ] = now
-
-            restored_count += 1
-
-        else:
-
-            # ------------------------------------------------
-            # BRAND NEW JOB
-            # ------------------------------------------------
-
-            record[
-                "job_state"
-            ] = "ACTIVE"
-
-            record[
-                "first_seen_at"
-            ] = now
-
-            record[
-                "last_seen_at"
-            ] = now
-
-            new_count += 1
-
-        merged_active.append(
-            record
-        )
-
-    # --------------------------------------------------------
-    # Existing archive
-    # --------------------------------------------------------
-
-    archived_by_key = {}
-
-    for item in old_archive:
-
-        key = job_key(
-            item
-        )
-
-        if key:
-
-            archived_by_key[
-                key
-            ] = item
-
-    # --------------------------------------------------------
-    # Find jobs that disappeared
-    # --------------------------------------------------------
-
-    newly_archived = 0
-
-    for item in old_active:
-
-        key = job_key(
-            item
-        )
-
+        key = job_key(item)
         if not key:
             continue
 
-        # Job still exists.
-        if key in current_keys:
+        record = dict(item)
+        record["job_state"] = "ARCHIVED"
+        record["archived_at"] = now
+        if not record.get("last_seen_at"):
+            record["last_seen_at"] = now
+
+        archived_by_key[key] = record
+        newly_archived += 1
+
+    merged_active = []
+    new_count = 0
+    skipped_existing = 0
+
+    for item in new_active:
+        if not isinstance(item, dict):
             continue
 
-        record = dict(
-            item
-        )
+        key = job_key(item)
+        if not key:
+            continue
 
-        record[
-            "job_state"
-        ] = "ARCHIVED"
+        # If the job existed before this refresh, keep it archived rather
+        # than allowing the pipeline to repopulate the ACTIVE list.
+        if key in history:
+            skipped_existing += 1
 
-        record[
-            "archived_at"
-        ] = now
+            previous = history[key]
+            record = dict(
+                archived_by_key.get(key, previous)
+            )
 
-        if not record.get(
-            "last_seen_at"
-        ):
+            for field in history_fields:
+                if field in previous:
+                    record[field] = previous[field]
 
-            record[
-                "last_seen_at"
-            ] = now
+            record["job_state"] = "ARCHIVED"
+            record.setdefault("archived_at", now)
+            archived_by_key[key] = record
+            continue
 
-        archived_by_key[
-            key
-        ] = record
+        record = dict(item)
+        record["job_state"] = "ACTIVE"
+        record["first_seen_at"] = now
+        record["last_seen_at"] = now
+        record["status"] = "NOT APPLIED"
+        record["application_status"] = "NOT APPLIED"
+        record["workflow_status"] = "NOT APPLIED"
 
-        newly_archived += 1
+        merged_active.append(record)
+        new_count += 1
 
     return (
         merged_active,
-        list(
-            archived_by_key.values()
-        ),
-        restored_count,
+        list(archived_by_key.values()),
+        skipped_existing,
         new_count,
         newly_archived,
     )

@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import html
 import json
+import os
 import subprocess
 import sys
 import threading
@@ -631,9 +632,50 @@ def update_application(app_id, status):
 # REFRESH STATUS
 # =============================================================================
 
-def get_refresh_status():
-    data = load_json(REFRESH_STATUS_FILE)
+def _process_is_running(pid):
+    """Return True when the recorded refresh process is alive."""
+    try:
+        pid = int(pid)
+    except (TypeError, ValueError):
+        return False
+    if pid <= 0:
+        return False
+    try:
+        os.kill(pid, 0)
+    except (ProcessLookupError, PermissionError, OSError):
+        return False
+    proc_cmdline = Path(f"/proc/{pid}/cmdline")
+    if proc_cmdline.exists():
+        try:
+            command = proc_cmdline.read_text(encoding="utf-8", errors="ignore").replace("\x00", " ")
+            if "refresh_jobs.py" not in command:
+                return False
+        except OSError:
+            pass
+    return True
 
+
+def _recover_stale_refresh(data):
+    """Clear a refresh state left behind by an interrupted run."""
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return {
+        "status": "IDLE",
+        "progress": 0,
+        "step": "Ready",
+        "detail": "",
+        "message": "Previous refresh was interrupted. Ready to refresh again.",
+        "started_at": data.get("started_at", ""),
+        "finished_at": now,
+        "elapsed_seconds": 0,
+        "eta_seconds": None,
+        "error": "Previous refresh did not finish.",
+        "process_pid": None,
+    }
+
+
+def get_refresh_status():
+    """Read refresh state and automatically recover stale RUNNING states."""
+    data = load_json(REFRESH_STATUS_FILE)
     if not isinstance(data, dict):
         return {
             "status": "IDLE",
@@ -645,7 +687,30 @@ def get_refresh_status():
             "finished_at": "",
             "elapsed_seconds": 0,
             "eta_seconds": None,
+            "process_pid": None,
         }
+
+    status = str(data.get("status") or "IDLE").upper()
+    if status in {"RUNNING", "STARTING"}:
+        pid = data.get("process_pid")
+        if pid and _process_is_running(pid):
+            return data
+
+        started_text = str(data.get("started_at") or "")
+        stale = False
+        if started_text:
+            try:
+                started = datetime.strptime(started_text, "%Y-%m-%d %H:%M:%S")
+                stale = (datetime.now() - started).total_seconds() > 120
+            except ValueError:
+                stale = True
+        else:
+            stale = True
+
+        if stale:
+            recovered = _recover_stale_refresh(data)
+            save_json(REFRESH_STATUS_FILE, recovered)
+            return recovered
 
     return data
 
@@ -686,6 +751,17 @@ def run_refresh_job():
                 stderr=subprocess.STDOUT,
                 text=True,
             )
+
+            current = load_json(REFRESH_STATUS_FILE)
+            if not isinstance(current, dict):
+                current = {}
+            current.update({
+                "status": "RUNNING",
+                "process_pid": process.pid,
+                "started_at": started,
+                "message": "Refreshing jobs. Please keep this dashboard open.",
+            })
+            save_json(REFRESH_STATUS_FILE, current)
 
             process.wait()
 
@@ -728,6 +804,23 @@ def start_refresh():
 
     if not acquired:
         return False, "A refresh is already running."
+
+    started = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    save_json(
+        REFRESH_STATUS_FILE,
+        {
+            "status": "STARTING",
+            "progress": 0,
+            "step": "Starting",
+            "detail": "Launching refresh pipeline...",
+            "message": "Starting job refresh...",
+            "started_at": started,
+            "finished_at": "",
+            "elapsed_seconds": 0,
+            "eta_seconds": None,
+            "process_pid": None,
+        },
+    )
 
     refresh_thread = threading.Thread(
         target=run_refresh_job,
