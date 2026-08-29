@@ -5,7 +5,10 @@ from __future__ import annotations
 
 import html
 import json
+import os
 import subprocess
+
+import application_tracker as tracker_backend
 import sys
 import threading
 from datetime import datetime
@@ -26,6 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent
 TRACKER_FILE = BASE_DIR / "application_tracker.json"
 QUEUE_FILE = BASE_DIR / "application_queue.json"
 ARCHIVE_FILE = BASE_DIR / "archived_jobs.json"
+TRASH_FILE = BASE_DIR / "trash_jobs.json"
 
 REFRESH_SCRIPT = BASE_DIR / "refresh_jobs.py"
 REFRESH_STATUS_FILE = BASE_DIR / ".refresh_status.json"
@@ -39,17 +43,23 @@ REFRESH_LOG_FILE = BASE_DIR / "refresh_jobs.log"
 VALID_STATUSES = (
     "NOT APPLIED",
     "APPLIED",
+    "SCREENING",
     "INTERVIEW",
-    "ACCEPTED",
+    "FINAL ROUND",
+    "OFFER",
     "REJECTED",
+    "WITHDRAWN",
 )
 
 STATUS_COLORS = {
     "NOT APPLIED": "#64748b",
     "APPLIED": "#2563eb",
+    "SCREENING": "#4f46e5",
     "INTERVIEW": "#d97706",
-    "ACCEPTED": "#16a34a",
+    "FINAL ROUND": "#ea580c",
+    "OFFER": "#16a34a",
     "REJECTED": "#dc2626",
+    "WITHDRAWN": "#64748b",
 }
 
 
@@ -130,28 +140,23 @@ def esc(value) -> str:
 def normalize_status(value):
     if not value:
         return "NOT APPLIED"
-
-    raw = (
-        str(value)
-        .strip()
-        .upper()
-        .replace("_", " ")
-    )
-
+    raw = str(value).strip().upper().replace("_", " ")
     aliases = {
         "NOTAPPLIED": "NOT APPLIED",
         "NOT APPLIED": "NOT APPLIED",
         "APPLIED": "APPLIED",
+        "SCREENING": "SCREENING",
         "INTERVIEW": "INTERVIEW",
         "INTERVIEWING": "INTERVIEW",
-        "ACCEPTED": "ACCEPTED",
-        "OFFER": "ACCEPTED",
+        "FINAL ROUND": "FINAL ROUND",
+        "FINALROUND": "FINAL ROUND",
+        "OFFER": "OFFER",
+        "ACCEPTED": "OFFER",
         "REJECTED": "REJECTED",
         "REJECT": "REJECTED",
+        "WITHDRAWN": "WITHDRAWN",
     }
-
     return aliases.get(raw, "NOT APPLIED")
-
 
 def clean_url(url):
     if not url:
@@ -401,6 +406,10 @@ def load_archive():
     return load_from_file(ARCHIVE_FILE)
 
 
+def load_trash():
+    return load_from_file(TRASH_FILE)
+
+
 def application_keys(applications):
     return {
         job_key(job)
@@ -538,76 +547,83 @@ def get_new_jobs(applications, refresh_status):
 # UPDATE APPLICATION STATUS
 # =============================================================================
 
+def _resolve_tracker_application(applications, app_id):
+    target = str(app_id or "").strip().lower()
+    for app in applications:
+        current = app.get("id") or app.get("application_id") or app.get("app_id")
+        if str(current or "").strip().lower() == target:
+            return app
+    for app in applications:
+        if job_key(app).lower() == target:
+            return app
+    return None
+
+
+def _next_tracker_id(applications):
+    highest = 0
+    for app in applications:
+        value = str(app.get("id") or "")
+        if value.upper().startswith("APP-"):
+            try:
+                highest = max(highest, int(value[4:]))
+            except ValueError:
+                pass
+    return f"APP-{highest + 1:04d}"
+
+
+def save_trash(items):
+    save_json(TRASH_FILE, items)
+
+
+def _move_to_trash(record, reason="Rejected"):
+    trash = load_trash()
+    key = job_key(record)
+    if key and any(job_key(item) == key for item in trash):
+        return
+    item = dict(record)
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    item["application_status"] = "REJECTED"
+    item["status"] = "REJECTED"
+    item["workflow_status"] = "REJECTED"
+    item["rejected_at"] = item.get("rejected_at") or now
+    item["last_updated"] = now
+    item["trash_reason"] = reason
+    item["trashed_at"] = now
+    item["job_state"] = "TRASH"
+    save_trash(trash + [item])
+
+
 def update_application(app_id, status):
     status = normalize_status(status)
-
     if status not in VALID_STATUSES:
         return False, "Invalid status."
 
-    data = load_json(TRACKER_FILE)
+    applications = tracker_backend.load_existing_tracker()
+    if not applications:
+        applications = load_from_file(TRACKER_FILE)
 
-    if isinstance(data, list):
-        items = data
-    elif isinstance(data, dict):
-        items = []
-
-        for key in (
-            "applications",
-            "jobs",
-            "queue",
-            "items",
-            "results",
-            "data",
-        ):
-            if isinstance(data.get(key), list):
-                items = data[key]
-                break
-    else:
-        items = []
-
-    found = False
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    for raw in items:
-        if not isinstance(raw, dict):
-            continue
-
-        current_id = (
-            raw.get("application_id")
-            or raw.get("app_id")
-            or raw.get("id")
-        )
-
-        if str(current_id) != str(app_id):
-            continue
-
-        raw["status"] = status
-        raw["application_status"] = status
-        raw["workflow_status"] = status
-        raw["status_updated_at"] = now
-
-        if status == "APPLIED":
-            raw["applied_at"] = now
-
-        elif status == "INTERVIEW":
-            raw["interview_at"] = now
-
-        elif status == "ACCEPTED":
-            raw["accepted_at"] = now
-
-        elif status == "REJECTED":
-            raw["rejected_at"] = now
-
-        found = True
-        break
-
-    if not found:
+    app = _resolve_tracker_application(applications, app_id)
+    if app is None:
         return False, "Application not found."
 
-    save_json(TRACKER_FILE, data)
+    actual_id = str(app.get("id") or app.get("application_id") or app_id)
 
-    return True, "Updated."
+    if not tracker_backend.update_status(applications, actual_id, status):
+        return False, "Tracker could not update the application."
 
+    updated = _resolve_tracker_application(applications, actual_id)
+    tracker_backend.save_all(applications)
+
+    if status == "REJECTED" and updated is not None:
+        _move_to_trash(updated, "Application marked REJECTED from dashboard.")
+        applications = [
+            item for item in applications
+            if str(item.get("id") or "") != actual_id
+        ]
+        tracker_backend.save_all(applications)
+        return True, "Application rejected and moved to Trash."
+
+    return True, f"Application updated to {status}."
 
 # =============================================================================
 # REFRESH STATUS
@@ -899,6 +915,12 @@ def render_application_card(job, new=False):
             "<span><strong>Matched:</strong> ",
             esc(skill_text(job.get("matched_skills"))),
             "</span>",
+            '<span><strong>Interview:</strong> ',
+            esc(job.get("interview_status") or "NOT STARTED"),
+            "</span>",
+            '<span><strong>Follow-up:</strong> ',
+            esc(job.get("follow_up_date") or "Not set"),
+            "</span>",
             "</div>",
             '<div class="workflow">',
             render_status_form(job),
@@ -985,12 +1007,25 @@ def render_review_card(job, index):
             "</div>",
             "</div>",
             '<div class="workflow review-actions">',
-            '<span class="review-note">',
-            "Review the job description yourself before applying.",
-            "</span>",
+            '<div class="review-action-buttons">',
+            '<form method="POST" action="/review-action" class="inline-form">',
+            '<input type="hidden" name="action" value="activate">',
+            '<input type="hidden" name="job_key" value="',
+            esc(job_key(job)),
+            '">',
+            '<button type="submit" class="activate-button">✓ Add to Active</button>',
+            '</form>',
+            '<form method="POST" action="/review-action" class="inline-form">',
+            '<input type="hidden" name="action" value="trash">',
+            '<input type="hidden" name="job_key" value="',
+            esc(job_key(job)),
+            '">',
+            '<button type="submit" class="trash-button">🗑️ Reject to Trash</button>',
+            '</form>',
             '<a class="apply-link" href="',
             url,
             '" target="_blank" rel="noopener">Open Job ↗</a>',
+            '</div>',
             "</div>",
             "</article>",
         ]
@@ -1042,6 +1077,26 @@ def render_archive_card(job):
     )
 
 
+def render_trash_card(job):
+    title = esc(job.get("title"))
+    company = esc(job.get("company"))
+    location = esc(job.get("location"))
+    url = esc(job.get("url") or "#")
+    score = f'{number(job.get("match_score")):.0f}'
+    when = esc(job.get("trashed_at") or job.get("rejected_at") or "Unknown")
+    reason = esc(job.get("trash_reason") or "Rejected")
+    return (
+        '<article class="trash-card">'
+        '<div class="archive-main">'
+        '<h3>' + title + '</h3>'
+        '<div class="company">' + company + '</div>'
+        '<div class="archive-meta">📍 ' + location + ' · Match ' + score + '/100 · ' + reason + ' · ' + when + '</div>'
+        '</div>'
+        '<a class="archive-link" href="' + url + '" target="_blank" rel="noopener">Open ↗</a>'
+        '</article>'
+    )
+
+
 # =============================================================================
 # DASHBOARD
 # =============================================================================
@@ -1050,6 +1105,7 @@ def render_dashboard(message=""):
     applications = load_applications()
     queue = load_queue()
     archive = load_archive()
+    trash = load_trash()
     refresh_status = get_refresh_status()
 
     applications.sort(
@@ -1078,6 +1134,7 @@ def render_dashboard(message=""):
 
     review_total = len(review_jobs)
     archive_total = len(archive)
+    trash_total = len(trash)
 
     counts = {
         status: 0
@@ -1135,6 +1192,16 @@ def render_dashboard(message=""):
             "Jobs that disappear from the active pipeline will appear here."
             "</p>"
             "</div>"
+        )
+
+    trash_cards = "".join(render_trash_card(job) for job in reversed(trash))
+
+    if not trash_cards:
+        trash_cards = (
+            '<div class="empty">'
+            '<h2>Trash is empty</h2>'
+            '<p>Rejected applications and rejected review jobs appear here.</p>'
+            '</div>'
         )
 
     progress = number(
@@ -1348,7 +1415,7 @@ h1 {
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 22px;
 }
@@ -1382,6 +1449,10 @@ h1 {
 
 .stat-archive {
   border-left: 5px solid #64748b;
+}
+
+.stat-trash {
+  border-left: 5px solid #dc2626;
 }
 
 .panel {
@@ -1649,6 +1720,14 @@ h1 {
   white-space: nowrap;
 }
 
+ .review-action-buttons {}
+ .review-action-buttons { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.inline-form { margin: 0; }
+.activate-button, .trash-button { border: 0; padding: 10px 13px; border-radius: 9px; font-weight: 800; cursor: pointer; }
+.activate-button { background: #16a34a; color: white; }
+.trash-button { background: #fee2e2; color: #991b1b; }
+.trash-card { display: flex; justify-content: space-between; align-items: center; gap: 15px; padding: 15px 19px; background: #fff7f7; border-bottom: 1px solid #fecaca; }
+.trash-card:last-child { border-bottom: 0; }
 .review-card {
   border-left: 5px solid #d97706;
 }
@@ -1817,6 +1896,7 @@ details[open] .archive-summary::after {
       <a class="nav-link" href="#review">🔎 Manual Review</a>
       <a class="nav-link" href="#applications">📋 Applications</a>
       <a class="nav-link" href="#archive">🗄️ Archived</a>
+      <a class="nav-link" href="#trash">🗑️ Trash</a>
       <button class="nav-refresh" type="button" onclick="startRefresh()">↻ Refresh</button>
     </div>
   </div>
@@ -1848,14 +1928,19 @@ __NOTICE__
     <div class="stat-label">ARCHIVED</div>
   </div>
 
+  <div class="stat stat-trash">
+    <div class="stat-number">__TRASH_COUNT__</div>
+    <div class="stat-label">TRASH / REJECTED</div>
+  </div>
+
   <div class="stat">
     <div class="stat-number">__INTERVIEW_COUNT__</div>
     <div class="stat-label">INTERVIEW</div>
   </div>
 
   <div class="stat">
-    <div class="stat-number">__ACCEPTED_COUNT__</div>
-    <div class="stat-label">ACCEPTED</div>
+    <div class="stat-number">__OFFER_COUNT__</div>
+    <div class="stat-label">OFFER</div>
   </div>
 
 </section>
@@ -1871,9 +1956,11 @@ __NOTICE__
     <span class="arrow">→</span>
     <span class="flow-step" style="background:#d97706">INTERVIEW</span>
     <span class="arrow">→</span>
-    <span class="flow-step" style="background:#16a34a">ACCEPTED</span>
+    <span class="flow-step" style="background:#ea580c">FINAL ROUND</span>
+    <span class="arrow">→</span>
+    <span class="flow-step" style="background:#16a34a">OFFER</span>
     <span class="arrow">/</span>
-    <span class="flow-step" style="background:#dc2626">REJECTED</span>
+    <span class="flow-step" style="background:#dc2626">REJECTED → TRASH</span>
   </div>
 </section>
 
@@ -1965,6 +2052,23 @@ __REVIEW_CARDS__
 
     <div class="archive-list">
 __ARCHIVE_CARDS__
+    </div>
+
+  </details>
+
+</div>
+
+<div class="archive-wrap" id="trash">
+
+  <details class="archive-details">
+
+    <summary class="archive-summary">
+      🗑️ Trash / rejected (__TRASH_COUNT__)
+      — rejected applications kept separately from normal archive
+    </summary>
+
+    <div class="archive-list">
+__TRASH_CARDS__
     </div>
 
   </details>
@@ -2164,7 +2268,7 @@ async function pollRefresh() {
       refreshPoll =
         setInterval(
           pollRefresh,
-          1000
+          1500
         );
     }
 
@@ -2244,8 +2348,9 @@ pollRefresh();
         "__NEW_COUNT__": str(len(new_jobs)),
         "__REVIEW_COUNT__": str(review_total),
         "__ARCHIVE_COUNT__": str(archive_total),
+        "__TRASH_COUNT__": str(trash_total),
         "__INTERVIEW_COUNT__": str(counts["INTERVIEW"]),
-        "__ACCEPTED_COUNT__": str(counts["ACCEPTED"]),
+        "__OFFER_COUNT__": str(counts["OFFER"]),
         "__REFRESH_MESSAGE__": esc(refresh_message),
         "__REFRESH_STEP__": esc(
             step + (
@@ -2270,6 +2375,7 @@ pollRefresh();
         "__ACTIVE_CARDS__": active_cards,
         "__REVIEW_CARDS__": review_cards,
         "__ARCHIVE_CARDS__": archive_cards,
+        "__TRASH_CARDS__": trash_cards,
     }
 
     for placeholder, value in replacements.items():
@@ -2398,6 +2504,47 @@ class DashboardHandler(BaseHTTPRequestHandler):
             )
             return
 
+        if parsed.path == "/review-action":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+            except ValueError:
+                length = 0
+            body = self.rfile.read(length).decode("utf-8")
+            values = parse_qs(body)
+            action = values.get("action", [""])[0]
+            target_key = values.get("job_key", [""])[0]
+
+            queue = load_queue()
+            target = next((job for job in queue if job_key(job) == target_key), None)
+            if target is None:
+                self.send_html(render_dashboard("Review action failed: job not found."), 400)
+                return
+
+            applications = tracker_backend.load_existing_tracker()
+            if not applications:
+                applications = load_from_file(TRACKER_FILE)
+
+            if action == "activate":
+                if any(job_key(app) == target_key for app in applications):
+                    self.send_html(render_dashboard("Job is already in Active Applications."), 400)
+                    return
+                entry = tracker_backend.create_entry(target, _next_tracker_id(applications))
+                applications.append(entry)
+                tracker_backend.save_all(applications)
+                self.send_html(render_dashboard(f"{entry['id']} added to Active Applications."))
+                return
+
+            if action == "trash":
+                item = dict(target)
+                item["application_status"] = "REJECTED"
+                item["status"] = "REJECTED"
+                _move_to_trash(item, "Manually rejected from Manual Review.")
+                self.send_html(render_dashboard("Job rejected from Manual Review and moved to Trash."))
+                return
+
+            self.send_html(render_dashboard("Unknown review action."), 400)
+            return
+
         if parsed.path == "/update":
 
             try:
@@ -2485,13 +2632,17 @@ def main():
     )
     print(
         "NOT APPLIED  →  APPLIED  →  "
-        "INTERVIEW  →  ACCEPTED / REJECTED"
+        "SCREENING → INTERVIEW → FINAL ROUND → OFFER / REJECTED"
     )
     print()
     print(
         f"Refresh script: "
         f"{REFRESH_SCRIPT.name} "
         f"({'FOUND' if REFRESH_SCRIPT.exists() else 'MISSING'})"
+    )
+    print(
+        f"Tracker backend: application_tracker.py "
+        f"({'FOUND' if (BASE_DIR / 'application_tracker.py').exists() else 'MISSING'})"
     )
     print()
     print(
