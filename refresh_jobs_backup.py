@@ -22,7 +22,6 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent
 
 TRACKER_FILE = BASE_DIR / "application_tracker.json"
-QUEUE_FILE = BASE_DIR / "application_queue.json"
 ARCHIVE_FILE = BASE_DIR / "archived_jobs.json"
 REFRESH_STATUS_FILE = BASE_DIR / ".refresh_status.json"
 
@@ -505,137 +504,6 @@ def run_step(
 
 
 # ============================================================
-# PRESERVE MANUAL REVIEW STATE
-# ============================================================
-
-MANUAL_REVIEW_LABELS = {
-    "REVIEW",
-    "VERIFY FIRST",
-    "STRETCH",
-    "MAYBE",
-    "MANUAL REVIEW",
-}
-
-
-def number(value, default=0.0):
-    try:
-        if value is None or value == "":
-            return default
-        return float(value)
-    except (TypeError, ValueError):
-        return default
-
-
-def manual_review_candidate(job, active_keys, archived_keys):
-    """
-    Match the dashboard's lenient manual-review rules.
-
-    A job remains in manual review when:
-      * the ranker labels it REVIEW / VERIFY FIRST / STRETCH / MAYBE
-      * experience is unknown but the match score is good
-      * experience is 1-3 years and the match is reasonably good
-
-    IMPORTANT:
-    This function is evaluated BEFORE the refresh pipeline overwrites
-    application_queue.json, so jobs that were previously in Manual Review
-    can be protected from being promoted into ACTIVE by the new ranker.
-    """
-
-    if not isinstance(job, dict):
-        return False
-
-    key = job_key(job)
-
-    if not key:
-        return False
-
-    if key in active_keys or key in archived_keys:
-        return False
-
-    recommendation = str(
-        job.get("recommendation")
-        or job.get("category")
-        or job.get("classification")
-        or job.get("decision")
-        or job.get("label")
-        or ""
-    ).strip().upper()
-
-    if recommendation in MANUAL_REVIEW_LABELS:
-        return True
-
-    score = number(
-        job.get("match_score")
-        if job.get("match_score") is not None
-        else job.get("score")
-    )
-
-    skill_match = number(
-        job.get("skill_match")
-        if job.get("skill_match") is not None
-        else job.get("skill_match_percentage")
-    )
-
-    experience = (
-        job.get("experience_required")
-        if job.get("experience_required") is not None
-        else job.get("required_experience")
-    )
-
-    if experience is None:
-        experience = job.get("experience")
-
-    if experience is None or str(experience).strip() == "":
-        return score >= 70 or skill_match >= 65
-
-    experience_number = number(experience, -1)
-
-    if 1 <= experience_number <= 3:
-        return score >= 65 or skill_match >= 60
-
-    return False
-
-
-def capture_manual_review_keys(
-    old_queue: list,
-    old_active: list,
-    old_archive: list,
-) -> set[str]:
-    """
-    Capture the jobs that were in the dashboard's Manual Review bucket
-    before the refresh begins.
-
-    Those keys are later protected from being promoted into ACTIVE.
-    """
-
-    active_keys = {
-        job_key(item)
-        for item in old_active
-        if job_key(item)
-    }
-
-    archived_keys = {
-        job_key(item)
-        for item in old_archive
-        if job_key(item)
-    }
-
-    review_keys = set()
-
-    for job in old_queue:
-        if manual_review_candidate(
-            job,
-            active_keys,
-            archived_keys,
-        ):
-            key = job_key(job)
-            if key:
-                review_keys.add(key)
-
-    return review_keys
-
-
-# ============================================================
 # PRESERVE APPLICATION HISTORY
 # ============================================================
 
@@ -643,7 +511,6 @@ def preserve_history(
     old_active: list,
     old_archive: list,
     new_active: list,
-    protected_manual_review_keys: set[str] | None = None,
 ):
     """
     Refresh policy:
@@ -656,10 +523,6 @@ def preserve_history(
     """
 
     now = datetime.now().isoformat(timespec="seconds")
-
-    protected_manual_review_keys = (
-        protected_manual_review_keys or set()
-    )
 
     history_fields = [
         "application_id",
@@ -715,14 +578,6 @@ def preserve_history(
 
         key = job_key(item)
         if not key:
-            continue
-
-        # If this job was already in Manual Review before the refresh,
-        # keep it out of ACTIVE. The fresh application_queue.json remains
-        # available to the dashboard so it can continue to appear in the
-        # Manual Review section.
-        if key in protected_manual_review_keys:
-            skipped_existing += 1
             continue
 
         # If the job existed before this refresh, keep it archived rather
@@ -867,19 +722,6 @@ def main():
         ARCHIVE_FILE
     )
 
-    # Capture Manual Review BEFORE the pipeline changes application_queue.json.
-    # This prevents previously reviewed jobs from being silently promoted to
-    # ACTIVE by a later ranker refresh.
-    old_queue = load_list(
-        QUEUE_FILE
-    )
-
-    protected_manual_review_keys = capture_manual_review_keys(
-        old_queue,
-        old_active,
-        old_archive,
-    )
-
     print(
         f"Existing active applications: "
         f"{len(old_active)}"
@@ -888,11 +730,6 @@ def main():
     print(
         f"Existing archived jobs: "
         f"{len(old_archive)}"
-    )
-
-    print(
-        f"Existing manual-review jobs: "
-        f"{len(protected_manual_review_keys)}"
     )
 
     print()
@@ -954,8 +791,7 @@ def main():
     ) = preserve_history(
         old_active,
         old_archive,
-        new_active,
-        protected_manual_review_keys,
+        new_active
     )
 
     # ========================================================
@@ -1044,11 +880,6 @@ def main():
     print(
         f"New jobs:                 "
         f"{new_count}"
-    )
-
-    print(
-        f"Manual-review protected:  "
-        f"{len(protected_manual_review_keys)}"
     )
 
     print(

@@ -1,14 +1,14 @@
 {
-  "status": "RUNNING",
-  "progress": 27.9,
-  "step": "job_verifier.py",
-  "detail": "URL: https://jobs.smartrecruiters.com/Freshworks/744000143102264-specialist-data-platform-engineering?utm_source=freehire.me",
-  "message": "Running job_verifier.py",
-  "started_at": "2026-08-29 21:23:14",
-  "finished_at": "",
-  "elapsed_seconds": 89.9,
-  "eta_seconds": 231.8,
+  "status": "SUCCESS",
+  "progress": 100.0,
+  "step": "Complete",
+  "detail": "All jobs refreshed and application history preserved.",
+  "message": "Job refresh completed successfully.",
+  "started_at": "2026-08-29 21:32:33",
+  "finished_at": "2026-08-29 21:37:50",
+  "elapsed_seconds": 316.9,
+  "eta_seconds": null,
   "error": "",
-  "process_pid": 36514,
-  "heartbeat_at": "2026-08-29T21:24:44"
+  "process_pid": 40963,
+  "heartbeat_at": "2026-08-29T21:37:50"
 }

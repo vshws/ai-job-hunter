@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import html
 import json
+import re
 import subprocess
 import sys
 import threading
@@ -26,6 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent
 TRACKER_FILE = BASE_DIR / "application_tracker.json"
 QUEUE_FILE = BASE_DIR / "application_queue.json"
 ARCHIVE_FILE = BASE_DIR / "archived_jobs.json"
+TRASH_FILE = BASE_DIR / "trash_jobs.json"
 
 REFRESH_SCRIPT = BASE_DIR / "refresh_jobs.py"
 REFRESH_STATUS_FILE = BASE_DIR / ".refresh_status.json"
@@ -401,6 +403,10 @@ def load_archive():
     return load_from_file(ARCHIVE_FILE)
 
 
+def load_trash():
+    return load_from_file(TRASH_FILE)
+
+
 def application_keys(applications):
     return {
         job_key(job)
@@ -538,7 +544,7 @@ def get_new_jobs(applications, refresh_status):
 # UPDATE APPLICATION STATUS
 # =============================================================================
 
-def update_application(app_id, status):
+def update_application(app_id, status, job_key_value=""):
     status = normalize_status(status)
 
     if status not in VALID_STATUSES:
@@ -576,9 +582,24 @@ def update_application(app_id, status):
             raw.get("application_id")
             or raw.get("app_id")
             or raw.get("id")
+            or ""
         )
 
-        if str(current_id) != str(app_id):
+        normalized = normalize_job(raw)
+        normalized_id = str(normalized.get("application_id") or "")
+        current_key = job_key(raw)
+
+        matches_id = str(current_id) == str(app_id)
+        matches_normalized_id = (
+            normalized_id
+            and normalized_id == str(app_id)
+        )
+        matches_key = (
+            job_key_value
+            and current_key == str(job_key_value)
+        )
+
+        if not (matches_id or matches_normalized_id or matches_key):
             continue
 
         raw["status"] = status
@@ -607,6 +628,181 @@ def update_application(app_id, status):
     save_json(TRACKER_FILE, data)
 
     return True, "Updated."
+
+
+def next_application_id(items):
+    """Return the next available APP-#### identifier."""
+    highest = 0
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        raw_id = (
+            item.get("application_id")
+            or item.get("app_id")
+            or item.get("id")
+            or ""
+        )
+        match = re.search(r"(\d+)$", str(raw_id))
+        if match:
+            highest = max(highest, int(match.group(1)))
+    return f"APP-{highest + 1:04d}"
+
+
+def move_job_to_trash(job, reason="Rejected"):
+    """Store a rejected job in trash_jobs.json."""
+    trash = load_trash()
+    key = job_key(job)
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    record = normalize_job(job)
+    record.update({
+        "job_state": "TRASH",
+        "status": "REJECTED",
+        "application_status": "REJECTED",
+        "workflow_status": "REJECTED",
+        "status_updated_at": now,
+        "trashed_at": now,
+        "trash_reason": reason,
+    })
+
+    result = []
+    replaced = False
+    for existing in trash:
+        if job_key(existing) == key:
+            if not replaced:
+                result.append(record)
+                replaced = True
+        else:
+            result.append(existing)
+    if not replaced:
+        result.append(record)
+    save_json(TRASH_FILE, result)
+    return record
+
+
+def find_queue_job(job_key_value="", app_id=""):
+    """Find a queue job by stable job key or application id."""
+    queue = load_queue()
+    wanted_key = str(job_key_value or "")
+    wanted_id = str(app_id or "")
+
+    if wanted_key:
+        for job in queue:
+            if job_key(job) == wanted_key:
+                return job
+
+    if wanted_id:
+        for job in queue:
+            current_id = str(
+                job.get("application_id")
+                or job.get("app_id")
+                or job.get("id")
+                or ""
+            )
+            if current_id == wanted_id:
+                return job
+
+    return None
+
+
+def add_review_to_active(app_id="", job_key_value=""):
+    """Move a manual-review job into the active tracker."""
+    target = find_queue_job(job_key_value, app_id)
+    if target is None:
+        return False, "Manual-review job not found."
+
+    key = job_key(target)
+    applications = load_from_file(TRACKER_FILE)
+    archive = load_archive()
+    trash = load_trash()
+
+    if key in application_keys(applications):
+        return False, "Job is already active."
+    if key in application_keys(archive):
+        return False, "Job is already archived."
+    if key in application_keys(trash):
+        return False, "Job is already in trash."
+
+    record = normalize_job(target)
+    now = datetime.now().isoformat(timespec="seconds")
+    record["application_id"] = next_application_id(applications + archive + trash)
+    record["status"] = "NOT APPLIED"
+    record["application_status"] = "NOT APPLIED"
+    record["workflow_status"] = "NOT APPLIED"
+    record["job_state"] = "ACTIVE"
+    record["first_seen_at"] = str(record.get("first_seen_at") or now)
+    record["last_seen_at"] = now
+
+    applications.append(record)
+    save_json(TRACKER_FILE, applications)
+    return True, f"{record['application_id']} added to Active Applications."
+
+
+def reject_review_to_trash(app_id="", job_key_value=""):
+    """Move a manual-review job directly to Trash."""
+    target = find_queue_job(job_key_value, app_id)
+    if target is None:
+        return False, "Manual-review job not found."
+    move_job_to_trash(target, "Rejected during manual review")
+    return True, "Job moved to Trash."
+
+
+def reject_active_application_to_trash(app_id, job_key_value=""):
+    """Move a rejected active application from tracker to Trash."""
+    data = load_json(TRACKER_FILE)
+    if isinstance(data, list):
+        items = data
+        wrapper_key = None
+    elif isinstance(data, dict):
+        items = []
+        wrapper_key = None
+        for key in ("applications", "jobs", "queue", "items", "results", "data"):
+            value = data.get(key)
+            if isinstance(value, list):
+                items = value
+                wrapper_key = key
+                break
+    else:
+        return False, "Application tracker is empty or invalid."
+
+    target = None
+    kept = []
+    for raw in items:
+        if not isinstance(raw, dict):
+            kept.append(raw)
+            continue
+        current_id = (
+            raw.get("application_id")
+            or raw.get("app_id")
+            or raw.get("id")
+            or ""
+        )
+        normalized = normalize_job(raw)
+        normalized_id = str(normalized.get("application_id") or "")
+        current_key = job_key(raw)
+
+        matches = (
+            str(current_id) == str(app_id)
+            or (normalized_id and normalized_id == str(app_id))
+            or (job_key_value and current_key == str(job_key_value))
+        )
+
+        if matches and target is None:
+            target = raw
+        else:
+            kept.append(raw)
+
+    if target is None:
+        return False, "Application not found."
+
+    if wrapper_key is None:
+        save_json(TRACKER_FILE, kept)
+    else:
+        updated = dict(data)
+        updated[wrapper_key] = kept
+        save_json(TRACKER_FILE, updated)
+
+    move_job_to_trash(target, "Company rejection / application rejected")
+    return True, f"{app_id} rejected and moved to Trash."
 
 
 # =============================================================================
@@ -831,10 +1027,15 @@ def render_status_form(job):
             + "</option>"
         )
 
+    job_key_value = esc(job_key(job))
+
     return (
         '<form method="POST" action="/update" class="status-form">'
         '<input type="hidden" name="application_id" value="'
         + app_id
+        + '">'
+        '<input type="hidden" name="job_key" value="'
+        + job_key_value
         + '">'
         '<label>Status</label>'
         '<select name="status">'
@@ -920,81 +1121,55 @@ def render_review_card(job, index):
     company = esc(job.get("company"))
     location = esc(job.get("location"))
     url = esc(job.get("url") or "#")
-
+    key = esc(job_key(job))
     score = f'{number(job.get("match_score")):.0f}'
     skill_match = number(job.get("skill_match"))
-
     recommendation = job.get("recommendation") or "MANUAL REVIEW"
+    matched = skill_text(job.get("matched_skills"))
+    missing = skill_text(job.get("missing_skills"))
+    exp_status = job.get("experience_status") or "Not specified"
 
-    matched = skill_text(
-        job.get("matched_skills")
-    )
-
-    missing = skill_text(
-        job.get("missing_skills")
-    )
-
-    exp_status = (
-        job.get("experience_status")
-        or "Not specified"
-    )
-
-    return "".join(
-        [
-            '<article class="job-card review-card">',
-            '<div class="job-top">',
-            '<div>',
-            '<div class="app-id">REVIEW #',
-            str(index),
-            "</div>",
-            "<h3>",
-            title,
-            "</h3>",
-            '<div class="company">',
-            company,
-            "</div>",
-            "</div>",
-            '<div class="score"><strong>',
-            score,
-            '</strong><span>/100</span></div>',
-            "</div>",
-            '<div class="meta">',
-            "<span>📍 ",
-            location,
-            "</span>",
-            "<span>Experience: ",
-            esc(experience_text(job)),
-            "</span>",
-            "<span>Skill match: ",
-            f"{skill_match:.0f}",
-            "%</span>",
-            recommendation_badge(job),
-            "</div>",
-            '<div class="review-reason">',
-            "<strong>Why review?</strong><br>",
-            "Experience status: ",
-            esc(exp_status),
-            ". This job is intentionally kept for manual review.",
-            "</div>",
-            '<div class="skill-grid">',
-            "<div><strong>Matched skills</strong><br>",
-            esc(matched or "None detected"),
-            "</div>",
-            "<div><strong>Missing skills</strong><br>",
-            esc(missing or "None detected"),
-            "</div>",
-            "</div>",
-            '<div class="workflow review-actions">',
-            '<span class="review-note">',
-            "Review the job description yourself before applying.",
-            "</span>",
-            '<a class="apply-link" href="',
-            url,
-            '" target="_blank" rel="noopener">Open Job ↗</a>',
-            "</div>",
-            "</article>",
-        ]
-    )
+    return "".join([
+        '<article class="job-card review-card">',
+        '<div class="job-top">',
+        '<div>',
+        '<div class="app-id">REVIEW #', str(index), '</div>',
+        '<h3>', title, '</h3>',
+        '<div class="company">', company, '</div>',
+        '</div>',
+        '<div class="score"><strong>', score, '</strong><span>/100</span></div>',
+        '</div>',
+        '<div class="meta">',
+        '<span>📍 ', location, '</span>',
+        '<span>Experience: ', esc(experience_text(job)), '</span>',
+        '<span>Skill match: ', f"{skill_match:.0f}", '%</span>',
+        recommendation_badge(job),
+        '</div>',
+        '<div class="review-reason"><strong>Why review?</strong><br>',
+        'Experience status: ', esc(exp_status),
+        '. This job is intentionally kept for manual review.</div>',
+        '<div class="skill-grid">',
+        '<div><strong>Matched skills</strong><br>', esc(matched or "None detected"), '</div>',
+        '<div><strong>Missing skills</strong><br>', esc(missing or "None detected"), '</div>',
+        '</div>',
+        '<div class="workflow review-actions">',
+        '<div class="review-button-group">',
+        '<form method="POST" action="/review-action" class="inline-action-form">',
+        '<input type="hidden" name="action" value="add_active">',
+        '<input type="hidden" name="job_key" value="', key, '">',
+        '<button type="submit" class="decision-button active-button">✓ Add to Active</button>',
+        '</form>',
+        '<form method="POST" action="/review-action" class="inline-action-form" ',
+        'onsubmit="return confirm(\'Move this job to Trash?\');">',
+        '<input type="hidden" name="action" value="reject">',
+        '<input type="hidden" name="job_key" value="', key, '">',
+        '<button type="submit" class="decision-button trash-button">🗑 Reject to Trash</button>',
+        '</form>',
+        '</div>',
+        '<a class="apply-link" href="', url, '" target="_blank" rel="noopener">Open Job ↗</a>',
+        '</div>',
+        '</article>',
+    ])
 
 
 # =============================================================================
@@ -1042,6 +1217,29 @@ def render_archive_card(job):
     )
 
 
+def render_trash_card(job):
+    title = esc(job.get("title"))
+    company = esc(job.get("company"))
+    location = esc(job.get("location"))
+    url = esc(job.get("url") or "#")
+    score = f'{number(job.get("match_score")):.0f}'
+    reason = esc(job.get("trash_reason") or "Rejected")
+    trashed_at = esc(job.get("trashed_at") or "Unknown")
+
+    return "".join([
+        '<article class="trash-card">',
+        '<div class="trash-main">',
+        '<h3>', title, '</h3>',
+        '<div class="company">', company, '</div>',
+        '<div class="archive-meta">📍 ', location,
+        ' · Match ', score, '/100 · ', reason,
+        ' · ', trashed_at, '</div>',
+        '</div>',
+        '<a class="archive-link" href="', url, '" target="_blank" rel="noopener">Open ↗</a>',
+        '</article>',
+    ])
+
+
 # =============================================================================
 # DASHBOARD
 # =============================================================================
@@ -1050,6 +1248,7 @@ def render_dashboard(message=""):
     applications = load_applications()
     queue = load_queue()
     archive = load_archive()
+    trash = load_trash()
     refresh_status = get_refresh_status()
 
     applications.sort(
@@ -1078,6 +1277,7 @@ def render_dashboard(message=""):
 
     review_total = len(review_jobs)
     archive_total = len(archive)
+    trash_total = len(trash)
 
     counts = {
         status: 0
@@ -1135,6 +1335,19 @@ def render_dashboard(message=""):
             "Jobs that disappear from the active pipeline will appear here."
             "</p>"
             "</div>"
+        )
+
+    trash_cards = "".join(
+        render_trash_card(job)
+        for job in reversed(trash)
+    )
+
+    if not trash_cards:
+        trash_cards = (
+            '<div class="empty">'
+            '<h2>Trash is empty</h2>'
+            '<p>Rejected jobs will appear here.</p>'
+            '</div>'
         )
 
     progress = number(
@@ -1224,91 +1437,6 @@ body {
   font-family: Inter, Arial, sans-serif;
   background: #eef2f7;
   color: #0f172a;
-  scroll-behavior: smooth;
-  scroll-padding-top: 76px;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-/* Sticky navigation */
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background: rgba(15, 23, 42, 0.97);
-  border-bottom: 1px solid #334155;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18);
-  backdrop-filter: blur(8px);
-}
-
-.navbar-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  min-height: 56px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.navbar-inner::-webkit-scrollbar {
-  display: none;
-}
-
-.nav-brand {
-  color: white;
-  text-decoration: none;
-  font-weight: 900;
-  font-size: 14px;
-  white-space: nowrap;
-  margin-right: 8px;
-}
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.nav-link,
-.nav-refresh {
-  color: #cbd5e1;
-  text-decoration: none;
-  border: 0;
-  background: transparent;
-  padding: 9px 11px;
-  border-radius: 8px;
-  font: inherit;
-  font-size: 13px;
-  font-weight: 700;
-  white-space: nowrap;
-  cursor: pointer;
-}
-
-.nav-link:hover,
-.nav-refresh:hover {
-  color: white;
-  background: #1e293b;
-}
-
-@media (max-width: 700px) {
-  .navbar-inner {
-    padding: 0 12px;
-  }
-
-  .nav-brand {
-    margin-right: 2px;
-  }
-
-  .nav-link,
-  .nav-refresh {
-    padding: 8px 9px;
-    font-size: 12px;
-  }
 }
 
 header {
@@ -1687,6 +1815,89 @@ h1 {
   font-size: 12px;
 }
 
+.review-button-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.inline-action-form {
+  margin: 0;
+}
+
+.decision-button {
+  border: 0;
+  color: white;
+  padding: 10px 13px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.active-button {
+  background: #16a34a;
+}
+
+.trash-button {
+  background: #dc2626;
+}
+
+.trash-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 19px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #fff;
+}
+
+.trash-card:last-child {
+  border-bottom: 0;
+}
+
+.trash-card h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+}
+
+.trash-wrap {
+  margin-top: 22px;
+}
+
+.trash-details {
+  background: white;
+  border: 1px solid #fecaca;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.trash-summary {
+  cursor: pointer;
+  padding: 17px 19px;
+  font-weight: 800;
+  list-style: none;
+  color: #991b1b;
+}
+
+.trash-summary::-webkit-details-marker {
+  display: none;
+}
+
+.trash-summary::after {
+  content: "＋";
+  float: right;
+}
+
+details[open] .trash-summary::after {
+  content: "−";
+}
+
+.trash-list {
+  border-top: 1px solid #fecaca;
+}
+
 .archive-wrap {
   margin-top: 30px;
 }
@@ -1771,9 +1982,18 @@ details[open] .archive-summary::after {
 
   .refresh-button,
   .apply-link,
-  .archive-link {
+  .archive-link,
+  .decision-button {
     width: 100%;
     text-align: center;
+  }
+
+  .review-button-group {
+    width: 100%;
+  }
+
+  .inline-action-form {
+    width: 100%;
   }
 
   .job-top {
@@ -1808,21 +2028,7 @@ details[open] .archive-summary::after {
   </div>
 </header>
 
-<nav class="navbar" aria-label="Dashboard navigation">
-  <div class="navbar-inner">
-    <a class="nav-brand" href="#dashboard">AI JOB HUNTER</a>
-    <div class="nav-links">
-      <a class="nav-link" href="#dashboard">🏠 Dashboard</a>
-      <a class="nav-link" href="#new-jobs">🆕 New Jobs</a>
-      <a class="nav-link" href="#review">🔎 Manual Review</a>
-      <a class="nav-link" href="#applications">📋 Applications</a>
-      <a class="nav-link" href="#archive">🗄️ Archived</a>
-      <button class="nav-refresh" type="button" onclick="startRefresh()">↻ Refresh</button>
-    </div>
-  </div>
-</nav>
-
-<main class="container" id="dashboard">
+<main class="container">
 
 __NOTICE__
 
@@ -1878,7 +2084,7 @@ __NOTICE__
 </section>
 
 
-<section class="refresh-panel" id="refresh">
+<section class="refresh-panel">
 
   <div class="refresh-info">
     <strong>Job data refresh</strong>
@@ -1923,7 +2129,7 @@ __NOTICE__
 </section>
 
 
-<div class="section-header" id="applications">
+<div class="section-header">
   <div>
     <h2>🆕 Active applications (__ACTIVE_COUNT__)</h2>
     <div class="section-subtitle">
@@ -1934,7 +2140,7 @@ __NOTICE__
   <a class="reload" href="/">↻ Reload Dashboard</a>
 </div>
 
-<section class="jobs" id="new-jobs">
+<section class="jobs">
 __ACTIVE_CARDS__
 </section>
 
@@ -1949,12 +2155,12 @@ __ACTIVE_CARDS__
   </div>
 </div>
 
-<section class="jobs" id="review">
+<section class="jobs">
 __REVIEW_CARDS__
 </section>
 
 
-<div class="archive-wrap" id="archive">
+<div class="archive-wrap">
 
   <details class="archive-details">
 
@@ -1965,6 +2171,23 @@ __REVIEW_CARDS__
 
     <div class="archive-list">
 __ARCHIVE_CARDS__
+    </div>
+
+  </details>
+
+</div>
+
+<div class="trash-wrap">
+
+  <details class="trash-details">
+
+    <summary class="trash-summary">
+      🗑️ Trash / Rejected (__TRASH_COUNT__)
+      — rejected jobs are kept here
+    </summary>
+
+    <div class="trash-list">
+__TRASH_CARDS__
     </div>
 
   </details>
@@ -2244,6 +2467,7 @@ pollRefresh();
         "__NEW_COUNT__": str(len(new_jobs)),
         "__REVIEW_COUNT__": str(review_total),
         "__ARCHIVE_COUNT__": str(archive_total),
+        "__TRASH_COUNT__": str(trash_total),
         "__INTERVIEW_COUNT__": str(counts["INTERVIEW"]),
         "__ACCEPTED_COUNT__": str(counts["ACCEPTED"]),
         "__REFRESH_MESSAGE__": esc(refresh_message),
@@ -2270,6 +2494,7 @@ pollRefresh();
         "__ACTIVE_CARDS__": active_cards,
         "__REVIEW_CARDS__": review_cards,
         "__ARCHIVE_CARDS__": archive_cards,
+        "__TRASH_CARDS__": trash_cards,
     }
 
     for placeholder, value in replacements.items():
@@ -2428,10 +2653,22 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 ["NOT APPLIED"],
             )[0]
 
-            ok, update_message = update_application(
-                app_id,
-                status,
-            )
+            job_key_value = values.get(
+                "job_key",
+                [""],
+            )[0]
+
+            if normalize_status(status) == "REJECTED":
+                ok, update_message = reject_active_application_to_trash(
+                    app_id,
+                    job_key_value,
+                )
+            else:
+                ok, update_message = update_application(
+                    app_id,
+                    status,
+                    job_key_value,
+                )
 
             if ok:
                 self.send_html(
@@ -2450,6 +2687,49 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
             return
 
+        if parsed.path == "/review-action":
+
+            try:
+                length = int(
+                    self.headers.get(
+                        "Content-Length",
+                        "0",
+                    )
+                )
+            except ValueError:
+                length = 0
+
+            body = (
+                self.rfile
+                .read(length)
+                .decode("utf-8")
+            )
+
+            values = parse_qs(body)
+            action = values.get("action", [""])[0]
+            app_id = values.get("application_id", [""])[0]
+            review_job_key = values.get("job_key", [""])[0]
+
+            if action == "add_active":
+                ok, action_message = add_review_to_active(
+                    app_id,
+                    review_job_key,
+                )
+            elif action == "reject":
+                ok, action_message = reject_review_to_trash(
+                    app_id,
+                    review_job_key,
+                )
+            else:
+                ok = False
+                action_message = "Unknown review action."
+
+            self.send_html(
+                render_dashboard(action_message),
+                200 if ok else 400,
+            )
+            return
+
         self.send_html(
             "<h1>404 - Not Found</h1>",
             404,
@@ -2463,6 +2743,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
 def main():
     applications = load_applications()
     archive = load_archive()
+    trash = load_trash()
     queue = load_queue()
 
     print("=" * 95)
@@ -2478,6 +2759,9 @@ def main():
     )
     print(
         f"Archived jobs: {len(archive)}"
+    )
+    print(
+        f"Trash / rejected jobs: {len(trash)}"
     )
     print()
     print(
