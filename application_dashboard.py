@@ -1,29 +1,10 @@
 #!/usr/bin/env python3
-"""
-AI JOB HUNTER - LOCAL APPLICATION DASHBOARD
 
-Workflow:
-    NOT APPLIED -> APPLIED -> INTERVIEW -> ACCEPTED
-                                      -> REJECTED
-
-Dashboard sections:
-    1. Active / new applications
-    2. Manual review jobs
-    3. Archived jobs
-    4. Refresh progress
-
-Run:
-    python application_dashboard.py
-
-Then open:
-    http://localhost:8000
-"""
 
 from __future__ import annotations
 
 import html
 import json
-import os
 import subprocess
 import sys
 import threading
@@ -632,50 +613,9 @@ def update_application(app_id, status):
 # REFRESH STATUS
 # =============================================================================
 
-def _process_is_running(pid):
-    """Return True when the recorded refresh process is alive."""
-    try:
-        pid = int(pid)
-    except (TypeError, ValueError):
-        return False
-    if pid <= 0:
-        return False
-    try:
-        os.kill(pid, 0)
-    except (ProcessLookupError, PermissionError, OSError):
-        return False
-    proc_cmdline = Path(f"/proc/{pid}/cmdline")
-    if proc_cmdline.exists():
-        try:
-            command = proc_cmdline.read_text(encoding="utf-8", errors="ignore").replace("\x00", " ")
-            if "refresh_jobs.py" not in command:
-                return False
-        except OSError:
-            pass
-    return True
-
-
-def _recover_stale_refresh(data):
-    """Clear a refresh state left behind by an interrupted run."""
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    return {
-        "status": "IDLE",
-        "progress": 0,
-        "step": "Ready",
-        "detail": "",
-        "message": "Previous refresh was interrupted. Ready to refresh again.",
-        "started_at": data.get("started_at", ""),
-        "finished_at": now,
-        "elapsed_seconds": 0,
-        "eta_seconds": None,
-        "error": "Previous refresh did not finish.",
-        "process_pid": None,
-    }
-
-
 def get_refresh_status():
-    """Read refresh state and automatically recover stale RUNNING states."""
     data = load_json(REFRESH_STATUS_FILE)
+
     if not isinstance(data, dict):
         return {
             "status": "IDLE",
@@ -687,30 +627,7 @@ def get_refresh_status():
             "finished_at": "",
             "elapsed_seconds": 0,
             "eta_seconds": None,
-            "process_pid": None,
         }
-
-    status = str(data.get("status") or "IDLE").upper()
-    if status in {"RUNNING", "STARTING"}:
-        pid = data.get("process_pid")
-        if pid and _process_is_running(pid):
-            return data
-
-        started_text = str(data.get("started_at") or "")
-        stale = False
-        if started_text:
-            try:
-                started = datetime.strptime(started_text, "%Y-%m-%d %H:%M:%S")
-                stale = (datetime.now() - started).total_seconds() > 120
-            except ValueError:
-                stale = True
-        else:
-            stale = True
-
-        if stale:
-            recovered = _recover_stale_refresh(data)
-            save_json(REFRESH_STATUS_FILE, recovered)
-            return recovered
 
     return data
 
@@ -751,17 +668,6 @@ def run_refresh_job():
                 stderr=subprocess.STDOUT,
                 text=True,
             )
-
-            current = load_json(REFRESH_STATUS_FILE)
-            if not isinstance(current, dict):
-                current = {}
-            current.update({
-                "status": "RUNNING",
-                "process_pid": process.pid,
-                "started_at": started,
-                "message": "Refreshing jobs. Please keep this dashboard open.",
-            })
-            save_json(REFRESH_STATUS_FILE, current)
 
             process.wait()
 
@@ -804,23 +710,6 @@ def start_refresh():
 
     if not acquired:
         return False, "A refresh is already running."
-
-    started = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    save_json(
-        REFRESH_STATUS_FILE,
-        {
-            "status": "STARTING",
-            "progress": 0,
-            "step": "Starting",
-            "detail": "Launching refresh pipeline...",
-            "message": "Starting job refresh...",
-            "started_at": started,
-            "finished_at": "",
-            "elapsed_seconds": 0,
-            "eta_seconds": None,
-            "process_pid": None,
-        },
-    )
 
     refresh_thread = threading.Thread(
         target=run_refresh_job,
@@ -1335,6 +1224,91 @@ body {
   font-family: Inter, Arial, sans-serif;
   background: #eef2f7;
   color: #0f172a;
+  scroll-behavior: smooth;
+  scroll-padding-top: 76px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Sticky navigation */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(15, 23, 42, 0.97);
+  border-bottom: 1px solid #334155;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18);
+  backdrop-filter: blur(8px);
+}
+
+.navbar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.navbar-inner::-webkit-scrollbar {
+  display: none;
+}
+
+.nav-brand {
+  color: white;
+  text-decoration: none;
+  font-weight: 900;
+  font-size: 14px;
+  white-space: nowrap;
+  margin-right: 8px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-link,
+.nav-refresh {
+  color: #cbd5e1;
+  text-decoration: none;
+  border: 0;
+  background: transparent;
+  padding: 9px 11px;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.nav-link:hover,
+.nav-refresh:hover {
+  color: white;
+  background: #1e293b;
+}
+
+@media (max-width: 700px) {
+  .navbar-inner {
+    padding: 0 12px;
+  }
+
+  .nav-brand {
+    margin-right: 2px;
+  }
+
+  .nav-link,
+  .nav-refresh {
+    padding: 8px 9px;
+    font-size: 12px;
+  }
 }
 
 header {
@@ -1834,7 +1808,21 @@ details[open] .archive-summary::after {
   </div>
 </header>
 
-<main class="container">
+<nav class="navbar" aria-label="Dashboard navigation">
+  <div class="navbar-inner">
+    <a class="nav-brand" href="#dashboard">AI JOB HUNTER</a>
+    <div class="nav-links">
+      <a class="nav-link" href="#dashboard">🏠 Dashboard</a>
+      <a class="nav-link" href="#new-jobs">🆕 New Jobs</a>
+      <a class="nav-link" href="#review">🔎 Manual Review</a>
+      <a class="nav-link" href="#applications">📋 Applications</a>
+      <a class="nav-link" href="#archive">🗄️ Archived</a>
+      <button class="nav-refresh" type="button" onclick="startRefresh()">↻ Refresh</button>
+    </div>
+  </div>
+</nav>
+
+<main class="container" id="dashboard">
 
 __NOTICE__
 
@@ -1890,7 +1878,7 @@ __NOTICE__
 </section>
 
 
-<section class="refresh-panel">
+<section class="refresh-panel" id="refresh">
 
   <div class="refresh-info">
     <strong>Job data refresh</strong>
@@ -1935,7 +1923,7 @@ __NOTICE__
 </section>
 
 
-<div class="section-header">
+<div class="section-header" id="applications">
   <div>
     <h2>🆕 Active applications (__ACTIVE_COUNT__)</h2>
     <div class="section-subtitle">
@@ -1946,7 +1934,7 @@ __NOTICE__
   <a class="reload" href="/">↻ Reload Dashboard</a>
 </div>
 
-<section class="jobs">
+<section class="jobs" id="new-jobs">
 __ACTIVE_CARDS__
 </section>
 
@@ -1961,12 +1949,12 @@ __ACTIVE_CARDS__
   </div>
 </div>
 
-<section class="jobs">
+<section class="jobs" id="review">
 __REVIEW_CARDS__
 </section>
 
 
-<div class="archive-wrap">
+<div class="archive-wrap" id="archive">
 
   <details class="archive-details">
 
